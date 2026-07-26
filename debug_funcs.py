@@ -1,8 +1,11 @@
 #import functions
 
 #import dependencies
+import math
+
 import numpy as np
-import math 
+
+from phases_to_location import phasesToLocation1D
 
 
 def phasesToLocation1Dtest(optional_inputs=None, trial_num = 100,
