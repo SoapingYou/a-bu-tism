@@ -12,6 +12,9 @@ def phasesToLocation1D(data: np.ndarray, PRECISION=0.8, TRY_LIMIT=5) -> float:
 
     :return float: -1 on failure, location otherwise
     '''
+    # because this is how you sort an array in np of course
+    data = data[data[:, 0].argsort()[::-1]]
+
     s1: float = data[0][0]
     p1: float = data[0][1]
     tries = [(n + p1/(2*np.pi)) * s1 for n in range(TRY_LIMIT)]
@@ -28,6 +31,8 @@ def phasesToLocation1D(data: np.ndarray, PRECISION=0.8, TRY_LIMIT=5) -> float:
 
 
 if __name__ == '__main__':
+    import matplotlib.pyplot as plt
+
     data = np.array([
         [11, 0.56],
         [7, 1.8],
@@ -35,4 +40,11 @@ if __name__ == '__main__':
         [3, 4.18],
         [2, 3.1415],
     ])
-    print(f'{phasesToLocation1D(data):.2f}')
+    
+    xaxis = np.arange(0, 30, 0.1)
+    for (s, p) in data:
+        plt.plot(xaxis, np.cos(2 * np.pi / s * xaxis - p))
+    x = phasesToLocation1D(data)
+    plt.vlines(x, -1, 1, 'k', 'dashed')
+    print(f'{x:.2f}')
+    plt.show()

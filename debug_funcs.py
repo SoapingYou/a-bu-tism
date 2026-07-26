@@ -1,5 +1,3 @@
-#import functions
-
 #import dependencies
 import math
 
@@ -40,7 +38,7 @@ def phasesToLocation1Dtest(optional_inputs=None, trial_num = 100,
 
     if(_generateNewInput):
         rng = np.random.default_rng(seed=42)
-        test_inputs = np.zeros((trial_num,n,2))
+        training_input = np.zeros((trial_num,n,2))
         for i in range(trial_num):
             _si = rng.integers(low,high,size=n)
             _pi = rng.random(size=5) * 2 * np.pi
@@ -58,8 +56,10 @@ def phasesToLocation1Dtest(optional_inputs=None, trial_num = 100,
                 answer = (
                     f"not working in case {i} bc solution {solution} "
                     f"is not consistent with {j}th module:"
-                    f" si = {training_input[i][j][0]}  pi = {training_input[i][j][1]}"
+                    f" s_i = {training_input[i][j][0]}  p_i = {training_input[i][j][1]}"
                 )
                 return answer
         return "Works!"
             
+if __name__ == '__main__':
+    print(phasesToLocation1Dtest())
