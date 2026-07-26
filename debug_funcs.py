@@ -60,6 +60,29 @@ def phasesToLocation1Dtest(optional_inputs=None, trial_num = 100,
                 )
                 return answer
         return "Works!"
-            
+
+def altPhasesToLocation1Dtest(trials = 10, precision=0.01):
+    TAU = np.pi * 2
+    for _ in range(trials):
+        x = np.random.random() * 500 # [0, 500)
+        x = 23
+        s_i = np.random.random(5) * 100 # [0, 100)
+
+        n = np.floor(x / s_i)
+        p_i = TAU * x / s_i - TAU * n
+
+        data = np.zeros((5,2))
+        data[:, 0] = s_i # 1st col
+        data[:, 1] = p_i # 2nd col
+
+        x_guess = phasesToLocation1D(data, TRY_LIMIT=10)
+        if math.isclose(x, x_guess, rel_tol=precision):
+            print('😀', end=' ')
+        else:
+            print(f'\nFAILED: {x=}, {x_guess=}, {data=}')
+            return False
+    print()
+    return True
+
 if __name__ == '__main__':
-    print(phasesToLocation1Dtest())
+    assert altPhasesToLocation1Dtest(500)
