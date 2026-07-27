@@ -1,8 +1,11 @@
 #import functions
-from phaseSolutions import phasesToLocation1D
+
 #import dependencies
+import math
+
 import numpy as np
-import math 
+
+from phases_to_location import phasesToLocation1D
 
 
 def phasesToLocation1Dtest(trial_num, optional_inputs=None,
@@ -64,7 +67,7 @@ def phasesToLocation1Dtest(trial_num, optional_inputs=None,
                 answer = (
                     f"not working in case {i} bc solution {solution} "
                     f"is not consistent with {j}th module:"
-                    f" si = {si}  pi = {pi}"
+                    f" si = {training_input[i][j][0]}  pi = {training_input[i][j][1]}"
                 )
                 return answer
             answer = (
@@ -75,7 +78,4 @@ def phasesToLocation1Dtest(trial_num, optional_inputs=None,
                 print(answer)
         print(f"solution for case {i} is good")
         return "Works!"
-
-
-#print(phasesToLocation1Dtest(data, trial_num=1, PRECISION=0.5, TRY_LIMIT=100, n=5, verbose=True))
-print(phasesToLocation1Dtest(trial_num=100, PRECISION=0.2, TRY_LIMIT=1000, verbose=True))
+            
