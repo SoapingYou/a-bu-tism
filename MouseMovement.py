@@ -140,6 +140,3 @@ def main():
     print("This is how fast the mouse moved each timestep:", deltaHyp.tolist())
 
     tr.done()
-
-
-main()
