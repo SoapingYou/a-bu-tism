@@ -7,7 +7,7 @@ class Module:
     |    Access the i-th grid cell's properties using list notation: module[i]
     |    Note that triangular y-axis is pi/3 CCW from x-axis!
 
-        :param float spacing: spatial scale in mm; distance between each lattice point.
+        :param float spacing: spatial scale in cm; distance between each lattice point.
         :param float orientation: rotation of grid in radians.
         :param float base_prob: lowest possible probability of each grid cell firing [0.0, 1.0].
         :param float max_prob: highest possible_probability of each grid cell firing [0.0, 1.0].
@@ -129,7 +129,7 @@ class Module:
 
         return self.base_prob + (self.max_prob - self.base_prob) * threshold_field
 
-    def phases_from_veloctiy(self, velocities: np.ndarray[np.float64], old_phase: np.ndarray[np.float64]) -> np.ndarray[np.float64]:
+    def phases_from_velocity(self, velocities: np.ndarray[np.float64], old_phase: np.ndarray[np.float64]) -> np.ndarray[np.float64]:
         """
         Gives the probabilities of firing for all neurons when organism has velocity of rectangular coordinates.
 
