@@ -39,6 +39,12 @@ class Module:
         wave_vectors = scale * np.stack((np.cos(angles), np.sin(angles)), axis=1)  # (3, 2)
         self._wave_vectors_T = wave_vectors.T
 
+        # transformation array for rect velocity to triangular velocity
+        self.transform = np.array([
+            [1, -1 / np.sqrt(3)],
+            [0,  2 / np.sqrt(3)]
+        ])
+
     def add_cell(self, phase_x=0.0, phase_y=0.0) -> int:
         """
             Adds one grid cell to the module.
@@ -123,6 +129,30 @@ class Module:
 
         return self.base_prob + (self.max_prob - self.base_prob) * threshold_field
 
+    def phases_from_veloctiy(self, velocities: np.ndarray[np.float64], old_phase: np.ndarray[np.float64]) -> np.ndarray[np.float64]:
+        """
+        Gives the probabilities of firing for all neurons when organism has velocity of rectangular coordinates.
+
+            :param np.ndarray[np.float64] velocities: velocities along rectangular axes given, shape (M, 2).
+            :param np.ndarray[np.float64] old_phase: old_phase of module, (phase_x, phase_y).
+
+            :return: new phases of grid cell module firing (phase_x,phase_y)
+            :rtype np.ndarray[np.float64]:
+        """
+        # value error if shape incorrect
+        if velocities.ndim != 2 or velocities.shape[1] != 2: raise ValueError("velocities must be shape (M, 2)")
+
+        velocities_triangular = velocities @ self.transform.T
+        
+        # change velocities from cm to rad
+        phase_change = velocities_triangular * self.phase_spacing
+        
+        # mod the phase
+        phases = old_phase + phase_change
+        phases %= 2 * np.pi
+        
+        return phases
+    
     def __getitem__(self, index):
         return {
             "phase_x": self._phase_x[index],
