@@ -18,8 +18,9 @@ def main():
     instRadians = torch.zeros(simlen, dtype=torch.float32)
     instDegrees = torch.zeros(simlen, dtype=torch.float32)
     chance = torch.zeros(simlen, dtype=torch.int32)
-    smallDX = [0.0] * simlen * int(1/interval)
-    smallDY = [0.0] * simlen * int(1/interval)
+    num_small_steps = simlen * int(1/interval)
+    smallDX = torch.zeros(num_small_steps, dtype=torch.float32)
+    smallDY = torch.zeros(num_small_steps, dtype=torch.float32)
 
     # Quadrant counters
     q1 = torch.zeros(simlen, dtype=torch.int32)
@@ -99,6 +100,7 @@ def main():
         instDegrees[i] = instRadians[i] * (180.0 / torch.pi)
 
         # Divide movement into smaller pieces
+        # Note: These assignments overwrite the `smallDX` and `smallDY` tensors initialized earlier
         smallDX = deltaXPos[i] / segments
         smallDY = deltaYPos[i] / segments
 
@@ -140,3 +142,6 @@ def main():
     print("This is how fast the mouse moved each timestep:", deltaHyp.tolist())
 
     tr.done()
+
+main()
+
