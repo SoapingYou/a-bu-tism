@@ -133,14 +133,14 @@ class Module:
         """
         Gives the probabilities of firing for all neurons when organism has velocity of rectangular coordinates.
 
-            :param np.ndarray[np.float64] velocities: velocities along rectangular axes given, shape (M, 2).
+            :param np.ndarray[np.float64] velocities: velocities along rectangular axes given, shape (2).
             :param np.ndarray[np.float64] old_phase: old_phase of module, (phase_x, phase_y).
 
             :return: new phases of grid cell module firing (phase_x,phase_y)
             :rtype np.ndarray[np.float64]:
         """
         # value error if shape incorrect
-        if velocities.ndim != 2 or velocities.shape[1] != 2: raise ValueError("velocities must be shape (M, 2)")
+        if velocities.ndim != 1 or velocities.shape[0] != 2: raise ValueError("velocities must be shape (2)")
 
         velocities_triangular = velocities @ self.transform.T
         
