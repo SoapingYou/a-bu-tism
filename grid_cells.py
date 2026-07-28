@@ -7,7 +7,7 @@ class Module:
     |    Access the i-th grid cell's properties using list notation: module[i]
     |    Note that triangular y-axis is pi/3 CCW from x-axis!
 
-        :param float spacing: spatial scale in mm; distance between each lattice point.
+        :param float spacing: spatial scale in cm; distance between each lattice point.
         :param float orientation: rotation of grid in radians.
         :param float base_prob: lowest possible probability of each grid cell firing [0.0, 1.0].
         :param float max_prob: highest possible_probability of each grid cell firing [0.0, 1.0].
