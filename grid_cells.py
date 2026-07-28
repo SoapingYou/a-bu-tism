@@ -145,7 +145,7 @@ class Module:
         velocities_triangular = velocities @ self.transform.T
         
         # change velocities from cm to rad
-        phase_change = velocities_triangular * self.phase_spacing
+        phase_change = velocities_triangular * self.spacing
         
         # mod the phase
         phases = old_phase + phase_change
