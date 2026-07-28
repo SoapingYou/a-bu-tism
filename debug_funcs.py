@@ -9,7 +9,7 @@ from phases_to_location import phasesToLocation1D
 
 
 def phasesToLocation1Dtest(trial_num, optional_inputs=None,
-                           PRECISION=0.8, TRY_LIMIT=5,  
+                           PRECISION=0.02*np.pi, TRY_LIMIT=10,  
                            n=5,low=25,high=100, threshold_pi=0.15,
                            verbose=False):
     '''
