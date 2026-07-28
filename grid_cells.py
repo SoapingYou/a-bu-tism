@@ -129,7 +129,7 @@ class Module:
 
         return self.base_prob + (self.max_prob - self.base_prob) * threshold_field
 
-    def phases_from_veloctiy(self, velocities: np.ndarray[np.float64], old_phase: np.ndarray[np.float64]) -> np.ndarray[np.float64]:
+    def phases_from_velocity(self, velocities: np.ndarray[np.float64], old_phase: np.ndarray[np.float64]) -> np.ndarray[np.float64]:
         """
         Gives the probabilities of firing for all neurons when organism has velocity of rectangular coordinates.
 
