@@ -139,6 +139,8 @@ def main():
     instRadians = torch.zeros(simlen, dtype=torch.float32)
     instDegrees = torch.zeros(simlen, dtype=torch.float32)
     chance = torch.zeros(simlen, dtype=torch.int32)
+    smallDX = [0.0] * simlen * int(1/interval)
+    smallDY = [0.0] * simlen * int(1/interval)
 
     # Quadrant counters
     q1 = torch.zeros(simlen, dtype=torch.int32)
