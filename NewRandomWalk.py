@@ -43,46 +43,53 @@ def main():
             self.ypos += self.dy
             return self.ypos, self.xpos
 
-        def headupdate(self): ## update head with small random angle
+        def headupdate(self):
             self.headdirection += gensmallangle()
+            if self.xpos >= 1000:
+                self.headdirection = mt.pi
+            if self.xpos <= -1000:
+                self.headdirection = 0
+            if self.ypos >= 1000:
+                self.headdirection = 3*mt.pi/2
+            if self.ypos <= -1000:
+                self.headdirection = mt.pi/2
             return self.headdirection
 
-        def speedupdate(self): ## update speed with random added/subtracted speed, max speed = 1000
+        def speedupdate(self):
             self.speed += genspeed()
             if self.speed < 0:
                 self.speed = 0
             self.speed = min(self.speed, 1000)
             return self.speed
 
-    kaelyn = Mouse(0,0,0,0) ## kaelyn asked for it to be named after her :)
-    ##it's her bday today on the 29th!!!
+    kaelyn = Mouse(0,0,0,0)
 
-    def simloop():##loop all class functions
+    def simloop():
         for i in range (0,simlen):
             kaelyn.speedupdate()
-            kaelyn.headupdate()
             kaelyn.posupdate()
+            kaelyn.headupdate()
 
-##create index-able lists
+
             accessiblespeed[i] = kaelyn.speed
             accessiblehead[i] = kaelyn.headdirection
             accessiblexlist[i] = kaelyn.xpos
             accessibleylist[i] = kaelyn.ypos
 
-    def turtlebit(): ## individual turle section, can be removed if needed
+    def turtlebit():
         import turtle as tr
 
-        screen = tr.Screen() ##screen setup
+        screen = tr.Screen()
         screen.setup(width=1200, height=1200)
         screen.setworldcoordinates(-1200, -1200, 1200, 1200)
 
-        mouse = tr.Turtle() ##mouse setup
+        mouse = tr.Turtle()
         mouse.pensize(2)
         mouse.color("purple")
         mouse.dot(5, "blue")
         screen.tracer(0)
 
-        for i in range(0, simlen): ## world borders
+        for i in range(0, simlen):
             if accessiblexlist[i] > 1000:
                 accessiblexlist[i] = 1000
             if accessiblexlist[i] < -1000:
@@ -92,12 +99,12 @@ def main():
             if accessibleylist[i] < -1000:
                 accessibleylist[i] = -1000
 
-            mouse.goto(accessiblexlist[i], accessibleylist[i]) ## update mouse position with new position
+            mouse.goto(accessiblexlist[i], accessibleylist[i])
         screen.update()
 
         tr.done()
 
-    simloop() ## run all functions, print lists of all data and the total distance from home
+    simloop()
     turtlebit()
     print(accessiblespeed)
     print(accessiblehead)
