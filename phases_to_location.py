@@ -3,11 +3,13 @@ from scipy.optimize import minimize_scalar
 
 class lipschitzSolver:
     def lipschitzPhasesToLocation1D(self,data: np.ndarray, eps: float=0.001, t_max:float=1e5) -> float:
+        # because this is how you sort an array in np of course
+        data = data[data[:, 0].argsort()[::-1]]
         self.s_is = data[:,0]
         self.p_is = data[:,1]
         self.phi_js = self.s_is * self.p_is / (2*np.pi)
 
-        L = 2*np.pi*np.mean(2*np.pi/self.s_is)          # Lipschitz bound on r(t)
+        L = 2*np.pi*np.mean(1/self.s_is)          # Lipschitz bound on r(t)
         min_step = 0.01
 
         threshold = 1 - eps
@@ -22,12 +24,17 @@ class lipschitzSolver:
 
             # safe jump: how far can we skip before r could possibly cross threshold?
             step = (threshold - r_t) / L
+            # safe jump to next slowest wave peak
+            next_cycle_peak = np.ceil((t - self.phi_js[0]) / self.s_is[0])
+            next_t = self.phi_js[0] + self.s_is[0]*next_cycle_peak
+            other_step = next_t-t
             t_prev = t
-            t = t + max(step, min_step)   # min_step guards against step -> 0 near threshold
+            # min_step guards against step -> 0 near threshold
+            t = t + np.max([other_step,step, min_step])   
 
     def r(self,t):
         theta_j_t = (2*np.pi/self.s_is)*t + self.phi_js
-        return np.abs(np.sum(np.exp(1j*(theta_j_t))))
+        return np.abs(np.mean(np.exp(1j*(theta_j_t))))
     def negative_r(self,t):
         return -self.r(t)
 
@@ -78,6 +85,9 @@ if __name__ == '__main__':
     for (s, p) in data:
         plt.plot(xaxis, np.cos(2 * np.pi / s * xaxis - p))
     x = phasesToLocation1D(data)
+    # lip = lipschitzSolver()
+    # x_guess = lip.lipschitzPhasesToLocation1D(data)
+    # x_guess=x_guess[0]
     plt.vlines(x, -1, 1, 'k', 'dashed')
     print(f'{x:.2f}')
     plt.show()
