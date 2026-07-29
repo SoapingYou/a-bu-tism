@@ -106,12 +106,11 @@ def main():
 
     simloop()
     turtlebit()
-    print(accessiblespeed)
-    print(accessiblehead)
-    print(accessiblexlist)
-    print(accessibleylist)
+    # print(accessiblespeed)
+    # print(accessiblehead)
+    # print(accessiblexlist)
+    # print(accessibleylist)
+    print(accessiblexlist[-1], accessibleylist[-1])
     totalhomedist = mt.sqrt((accessiblexlist[simlen-1]**2) + (accessibleylist[simlen-1]**2))
     print("the mouse moved this far:", totalhomedist)
-
-
-main()
+    return accessiblexlist, accessibleylist, timestep, simlen

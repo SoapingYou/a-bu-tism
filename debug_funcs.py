@@ -8,7 +8,7 @@ import numpy as np
 from phases_to_location import phasesToLocation1D, lipschitzSolver
 
 
-def altPhasesToLocation1Dtest(trials = 100, precision=0.1):
+def altPhasesToLocation1Dtest(trials = 10, precision=0.01):
     TAU = np.pi * 2
     for _ in range(trials):
         x = np.random.random() * 500 # [0, 500)
