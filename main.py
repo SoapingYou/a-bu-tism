@@ -17,7 +17,8 @@ class RunSimulator:
         self.length = 4 # in seconds, simulation length
         self.ticks = int(self.length/self.ts)
 
-#arbitrary numbers, adjust till it looks right ;) . OR replace w a better func, idrc
+    #arbitrary numbers, adjust till it looks right ;) . OR replace w a better func, idrc
+    # ? make gaussian
     def generate_error(self, k=0.1):
         return np.random()*k
     def hex_basis_to_cart(self, u, v):
