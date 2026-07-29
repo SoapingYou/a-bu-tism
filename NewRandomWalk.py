@@ -4,18 +4,20 @@ def main():
     import math as mt
 
     ##setting parameters of simulation
-    timestep = float(input("What is the resolution(in seconds) of your simulation(float)?"))
-    simlen = int(input("please enter the length of your simulation in seconds"))*int((1/timestep))
+    timestep = float(input("What is the resolution(in seconds) of your simulation(float, 0.001 recommended)?"))
+    simlen = int(input("please enter the length of your simulation in seconds(int, 20-100 recommended)"))*int((1/timestep))
     deltaheading = float(input(
         """
     what is the number of degrees the mouse can turn in one timestep
-    (about 2.4 degrees for ms, assuming it takes the mouse 75 ms to do 180)"""))
+    (about 2.4 degrees, assuming it takes the mouse 75 ms to do 180)"""))
 
     ## setting up empty lists to fill with accessible variables
     accessiblespeed = [0.0]*simlen
     accessiblehead = [0.0]*simlen
     accessiblexlist = [0.0]*simlen
     accessibleylist = [0.0]*simlen
+    accessibledx = [0.0]*simlen
+    accessibledy = [0.0]*simlen
 
     ## generating a small turn in the animal's head direction
     def gensmallangle():
@@ -59,7 +61,7 @@ def main():
             self.speed += genspeed()
             if self.speed < 0:
                 self.speed = 0
-            self.speed = min(self.speed, 1000)
+            self.speed = min(self.speed, 100)
             return self.speed
 
     kaelyn = Mouse(0,0,0,0)
@@ -75,6 +77,8 @@ def main():
             accessiblehead[i] = kaelyn.headdirection
             accessiblexlist[i] = kaelyn.xpos
             accessibleylist[i] = kaelyn.ypos
+            accessibledx[i] = kaelyn.dx
+            accessibledy[i] = kaelyn.dy
 
     def turtlebit():
         import turtle as tr
@@ -85,20 +89,21 @@ def main():
 
         mouse = tr.Turtle()
         mouse.pensize(2)
-        mouse.color("purple")
+        mouse.speed(0)
         mouse.dot(5, "blue")
         screen.tracer(0)
 
         for i in range(0, simlen):
-            if accessiblexlist[i] > 1000:
-                accessiblexlist[i] = 1000
-            if accessiblexlist[i] < -1000:
-                accessiblexlist[i] = -1000
-            if accessibleylist[i] > 1000:
-                accessibleylist[i] = 1000
-            if accessibleylist[i] < -1000:
-                accessibleylist[i] = -1000
-
+            if 0 <= accessiblespeed[i] < 20:
+                mouse.pencolor("blue")
+            elif 20 <= accessiblespeed[i] < 40:
+                mouse.pencolor("green")
+            elif 40 <= accessiblespeed[i] < 60:
+                mouse.pencolor("yellow")
+            elif 60 <= accessiblespeed[i] < 80:
+                mouse.pencolor("orange")
+            else:
+                mouse.pencolor("red")
             mouse.goto(accessiblexlist[i], accessibleylist[i])
         screen.update()
 
@@ -106,6 +111,9 @@ def main():
 
     simloop()
     turtlebit()
+    ##print("this is the mouse's change each in x timestep:",accessibledx)
+    ##print("this is the mouse's change in y each timestep:",accessibledy)
+    print("this is the mouse's speed each timestep:", accessiblespeed)
     # print(accessiblespeed)
     # print(accessiblehead)
     # print(accessiblexlist)
