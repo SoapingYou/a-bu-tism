@@ -1,5 +1,35 @@
 import numpy as np
+from scipy.optimize import minimize_scalar
 
+class lipschitzSolver:
+    def lipschitzPhasesToLocation1D(self,data: np.ndarray, eps: float=0.001, t_max:float=1e5) -> float:
+        self.s_is = data[:,0]
+        self.p_is = data[:,1]
+        self.phi_js = self.s_is * self.p_is / (2*np.pi)
+
+        L = 2*np.pi*np.mean(2*np.pi/self.s_is)          # Lipschitz bound on r(t)
+        min_step = 0.01
+
+        threshold = 1 - eps
+
+        t = 0
+        t_prev = 0
+        while t < t_max:
+            r_t = self.r(t)
+            if r_t >= threshold:
+                result = minimize_scalar(self.negative_r, bounds=(t_prev,t), method="bounded")
+                return result.x, -result.fun
+
+            # safe jump: how far can we skip before r could possibly cross threshold?
+            step = (threshold - r_t) / L
+            t_prev = t
+            t = t + max(step, min_step)   # min_step guards against step -> 0 near threshold
+
+    def r(self,t):
+        theta_j_t = (2*np.pi/self.s_is)*t + self.phi_js
+        return np.abs(np.sum(np.exp(1j*(theta_j_t))))
+    def negative_r(self,t):
+        return -self.r(t)
 
 def phasesToLocation1D(data: np.ndarray, PRECISION=0.05*2*np.pi, TRY_LIMIT=5) -> float:
     '''
