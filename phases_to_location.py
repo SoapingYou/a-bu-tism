@@ -1,6 +1,44 @@
 import numpy as np
+from scipy.optimize import minimize_scalar
 
 TAU = 2 * np.pi
+
+class lipschitzSolver:
+    def lipschitzPhasesToLocation1D(self,data: np.ndarray, eps: float=0.001, t_max:float=1e5) -> float:
+        # because this is how you sort an array in np of course
+        data = data[data[:, 0].argsort()[::-1]]
+        self.s_is = data[:,0]
+        self.p_is = data[:,1]
+        self.phi_js = self.s_is * self.p_is / (2*np.pi)
+
+        L = 2*np.pi*np.mean(1/self.s_is)          # Lipschitz bound on r(t)
+        min_step = 0.01
+
+        threshold = 1 - eps
+
+        t = 0
+        t_prev = 0
+        while t < t_max:
+            r_t = self.r(t)
+            if r_t >= threshold:
+                result = minimize_scalar(self.negative_r, bounds=(t_prev,t), method="bounded")
+                return result.x, -result.fun
+
+            # safe jump: how far can we skip before r could possibly cross threshold?
+            step = (threshold - r_t) / L
+            # safe jump to next slowest wave peak
+            next_cycle_peak = np.ceil((t - self.phi_js[0]) / self.s_is[0])
+            next_t = self.phi_js[0] + self.s_is[0]*next_cycle_peak
+            other_step = next_t-t
+            t_prev = t
+            # min_step guards against step -> 0 near threshold
+            t = t + np.max([other_step,step, min_step])   
+
+    def r(self,t):
+        theta_j_t = (2*np.pi/self.s_is)*t + self.phi_js
+        return np.abs(np.mean(np.exp(1j*(theta_j_t))))
+    def negative_r(self,t):
+        return -self.r(t)
 
 def phasesToLocation1D(data: np.ndarray, PRECISION=0.05*2*np.pi, TRY_LIMIT=5) -> float:
     '''
