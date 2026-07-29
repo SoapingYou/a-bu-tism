@@ -2,7 +2,7 @@
 
 from NewRandomWalk import main as NewRandomWalk
 from grid_cells import Module 
-from phases_to_location import phasesToLocation1D
+from phases_to_location import phasesToLocation1DProgressive
 
 import numpy as np
 
@@ -15,7 +15,8 @@ class RunSimulator:
         self.ts = 0.001# in seconds, timestep
         self.length = 1000 # of timesteps, simulation length
 
-#arbitrary numbers, adjust till it looks right ;) . OR replace w a better func, idrc
+    #arbitrary numbers, adjust till it looks right ;) . OR replace w a better func, idrc
+    # ? make gaussian
     def hex_basis_to_cart(self, u, v):
         x = u + 0.5 * v
         y = np.sqrt(3) / 2 * v
@@ -65,17 +66,17 @@ class RunSimulator:
         data_x = np.zeros((self.NUM_MODULES,2))
         data_x[:,0] = self.s_is
         data_x[:,1] = phases[:,0]
-        x_trig_dist = phasesToLocation1D(data_x)
+        x_trig_dist = phasesToLocation1DProgressive(data_x)
 
         data_y = np.zeros((self.NUM_MODULES,2))
         data_y[:,0] = self.s_is
         data_y[:,1] = phases[:,1]
-        y_trig_dist = phasesToLocation1D(data_y)
+        y_trig_dist = phasesToLocation1DProgressive(data_y)
         return self.hex_basis_to_cart(x_trig_dist,y_trig_dist)
 
         
 
-simulator = RunSimulator()
+simulator = RunSimulator(NUM_OF_MODS=5)
 simulator.assembly_grid_cells()
 simulator.get_random_walk(debug=False)
 location = simulator.run_simulation()
