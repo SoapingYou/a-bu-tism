@@ -4,8 +4,8 @@ def main():
     import math as mt
 
     ##setting parameters of simulation
-    timestep = float(input("What is the resolution(in seconds) of your simulation(float, 0.001 recommended)?"))
-    simlen = int(input("please enter the length of your simulation in seconds(int, 20-100 recommended)"))*int((1/timestep))
+    timestep = float(input("What is the resolution(in seconds) of your simulation(float, 0.001 recommended, 0.001 recommended)?"))
+    simlen = int(input("please enter the length of your simulation in seconds(int, 20-100 recommended)(int, 20-100 recommended)"))*int((1/timestep))
     deltaheading = float(input(
         """
     what is the number of degrees the mouse can turn in one timestep
