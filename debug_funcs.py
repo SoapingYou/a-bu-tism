@@ -1,5 +1,5 @@
 #import functions
-from phases_to_location import phasesToLocation1D, phasesToLocation1DTry2
+from phases_to_location import phasesToLocation1D, phasesToLocation1DProgressive
 #import dependencies
 import math
 
@@ -45,7 +45,7 @@ def roundedPhasesToLocation1Dtest(trials = 10, precision=1.251):
         data[:, 0] = s_i # 1st col
         data[:, 1] = rounded_p_i # 2nd col
 
-        x_guess = phasesToLocation1DTry2(data)
+        x_guess = phasesToLocation1DProgressive(data)
         if math.isclose(x, x_guess, rel_tol=precision):
             print('😀', end=' ')
         else:
