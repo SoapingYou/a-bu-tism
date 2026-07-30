@@ -1,16 +1,24 @@
-def main():
-    ## modules for random number generation, angle of walk generation, and graph generation
-    import random as rd
-    import math as mt
-    import numpy as np
+## modules for random number generation, angle of walk generation, and graph generation
+import random as rd
+import math as mt
+import numpy as np
 
-    ##setting parameters of simulation
-    timestep = float(input("What is the resolution(in seconds) of your simulation(float, 0.001 recommended)?"))
-    simlen = int(input("please enter the length of your simulation in seconds(int, 20-100 recommended)"))*int((1/timestep))
-    deltaheading = float(input(
-        """
-    what is the number of degrees the mouse can turn in one timestep
-    (about 2.4 degrees, assuming it takes the mouse 75 ms to do 180)"""))
+from TurtlePlotter import TurtlePlotter
+
+
+def main(user_input=False, plot_turtle=False, **kwargs):
+    ## setting parameters of simulation
+    if user_input:
+        timestep = float(input("What is the resolution(in seconds) of your simulation(float, 0.001 recommended)?"))
+        simlen = int(input("please enter the length of your simulation in seconds(int, 20-100 recommended)"))*int((1/timestep))
+        deltaheading = float(input(
+            """
+        what is the number of degrees the mouse can turn in one timestep
+        (about 2.4 degrees, assuming it takes the mouse 75 ms to do 180)"""))
+    else:
+        timestep = kwargs["timestep"]
+        simlen = kwargs["simlen"]
+        deltaheading = kwargs["deltaheading"]
 
     ## setting up empty lists to fill with accessible variables
     accessiblespeed = [0.0]*simlen
@@ -81,37 +89,10 @@ def main():
             accessibledx[i] = kaelyn.dx
             accessibledy[i] = kaelyn.dy
 
-    def turtlebit():
-        import turtle as tr
-
-        screen = tr.Screen()
-        screen.setup(width=1200, height=1200)
-        screen.setworldcoordinates(-1200, -1200, 1200, 1200)
-
-        mouse = tr.Turtle()
-        mouse.pensize(2)
-        mouse.speed(0)
-        mouse.dot(5, "blue")
-        screen.tracer(0)
-
-        for i in range(0, simlen):
-            if 0 <= accessiblespeed[i] < 20:
-                mouse.pencolor("blue")
-            elif 20 <= accessiblespeed[i] < 40:
-                mouse.pencolor("green")
-            elif 40 <= accessiblespeed[i] < 60:
-                mouse.pencolor("yellow")
-            elif 60 <= accessiblespeed[i] < 80:
-                mouse.pencolor("orange")
-            else:
-                mouse.pencolor("red")
-            mouse.goto(accessiblexlist[i], accessibleylist[i])
-        screen.update()
-
-        tr.done()
-
     simloop()
-    turtlebit()
+    if(plot_turtle):
+        turtleplotter = TurtlePlotter()
+        turtleplotter.turtlebit(accessiblespeed, accessiblexlist, accessibleylist)
     ##print("this is the mouse's change each in x timestep:",accessibledx)
     ##print("this is the mouse's change in y each timestep:",accessibledy)
     # print("this is the mouse's speed each timestep:", accessiblespeed)
@@ -122,4 +103,4 @@ def main():
     final_position = np.array([accessiblexlist[-1],accessibleylist[-1]])
     totalhomedist = mt.sqrt((accessiblexlist[simlen-1]**2) + (accessibleylist[simlen-1]**2))
     print("the mouse moved this far:", totalhomedist)
-    return accessiblespeed, accessiblehead, timestep, simlen, accessiblexlist,accessibleylist
+    return accessiblespeed, accessiblehead, timestep, simlen, accessiblexlist, accessibleylist

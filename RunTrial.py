@@ -41,7 +41,7 @@ class RunTrial:
         #     module.add_cells(self.NUM_SPATIAL_PHASES,self.NUM_SPATIAL_PHASES)
 
     def get_random_walk(self): #figure out a better way to structure ts </3
-        _outputs = NewRandomWalk()
+        _outputs = NewRandomWalk(user_input=False, plot_turtle=False, timestep=0.001, simlen=20_000, deltaheading=2.4)
         self.speed = np.array(_outputs[0])
         self.head_dir = np.array(_outputs[1])
         self.ts = _outputs[2]
