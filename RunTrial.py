@@ -64,7 +64,7 @@ class RunTrial:
         else: 
             _len_for_sim_locations = int(np.floor(self.simlen/error_freq))
             if((self.simlen - 1) % error_freq != 0): _len_for_sim_locations+=1
-            self.simulated_locations=np.zeros((int(np.floor(self.simlen/error_freq)), 3))
+            self.simulated_locations=np.zeros((_len_for_sim_locations, 3))
         for t in range(self.simlen):
             # simulate velocity (with error).
             t_speed = self.speed[t]
