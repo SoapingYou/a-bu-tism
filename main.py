@@ -10,7 +10,7 @@ def euclidean_pos_error(sim_vec: np.ndarray, true_vec: np.ndarray):
 def baseline(trial_num=10):
     error = 0
     for trial_num in range(trial_num):
-        simulator = RunTrial()
+        simulator = RunTrial(speed_noise_amplitude=0.2,headdir_noise_amplitude=0.1)
         simulator.assembly_grid_cells()
         simulator.get_random_walk()
         simulator.run_trial(error_freq = -1)

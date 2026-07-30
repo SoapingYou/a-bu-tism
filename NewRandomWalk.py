@@ -114,7 +114,7 @@ def main():
     turtlebit()
     ##print("this is the mouse's change each in x timestep:",accessibledx)
     ##print("this is the mouse's change in y each timestep:",accessibledy)
-    print("this is the mouse's speed each timestep:", accessiblespeed)
+    # print("this is the mouse's speed each timestep:", accessiblespeed)
     # print(accessiblespeed)
     # print(accessiblehead)
     # print(accessiblexlist)
