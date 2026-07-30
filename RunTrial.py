@@ -40,13 +40,14 @@ class RunTrial:
         # for module in self.modules:
         #     module.add_cells(self.NUM_SPATIAL_PHASES,self.NUM_SPATIAL_PHASES)
 
-    def get_random_walk(self):
+    def get_random_walk(self): #figure out a better way to structure ts </3
         _outputs = NewRandomWalk()
         self.speed = np.array(_outputs[0])
         self.head_dir = np.array(_outputs[1])
         self.ts = _outputs[2]
         self.simlen = _outputs[3]
-        self.final_og_position = _outputs[4]
+        self.og_position_x = _outputs[4]
+        self.og_position_y = _outputs[5]
 
     def run_trial(self, error_freq: int = -1):
         """
@@ -60,7 +61,10 @@ class RunTrial:
             e.g., 1 for calling get_location every timestep. 
         """
         if(error_freq == -1): self.simulated_locations=np.zeros((1,3))
-        else: self.simulated_locations=np.zeros((int(np.floor(self.simlen/error_freq)), 3))
+        else: 
+            _len_for_sim_locations = int(np.floor(self.simlen/error_freq))
+            if((self.simlen - 1) % error_freq != 0): _len_for_sim_locations+=1
+            self.simulated_locations=np.zeros((int(np.floor(self.simlen/error_freq)), 3))
         for t in range(self.simlen):
             # simulate velocity (with error).
             t_speed = self.speed[t]
@@ -71,9 +75,12 @@ class RunTrial:
                 self.modules[i].update(t_speed, t_headdir, self.ts)
 
             #see current sim location & error
-            if(error_freq != -1 and t % error_freq==0):
+            if((error_freq != -1 and t % error_freq==0)):
                 self.simulated_locations[int(t/error_freq)][0] = t
                 self.simulated_locations[int(t/error_freq)][1:] = self.get_location()
+            elif(t == self.simlen-1):
+                self.simulated_locations[-1][0] = t
+                self.simulated_locations[-1][1:] = self.get_location()
 
         self.final_simulated_position = self.get_location()
         return self.final_simulated_position
