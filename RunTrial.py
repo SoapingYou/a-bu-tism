@@ -14,7 +14,12 @@ class RunTrial:
         self.NUM_NEURONS_P_PHASE = NUM_NEURONS_P_PHASE
 
         self.ts = 0.001  # in seconds, timestep
-        self.length = 1000  # of timesteps, simulation length
+        self.simlen = 1000  # of timesteps, simulation length
+
+        self.speed = np.zeros(1)  # cm / s
+        self.head_dir = np.zeros(1)  # radians
+        self.final_og_position = np.zeros(2)  # cm
+
 
     # arbitrary numbers, adjust till it looks right ;) . OR replace w a better func, idrc
     # ? make gaussian

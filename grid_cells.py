@@ -15,7 +15,7 @@ class Module:
         :param float dir_tau: relaxation constant for head direction OU process. Default 1.0
     """
 
-    def __init__(self, spacing=50.0, speed_noise_amplitude=0.03, dir_noise_amplitude=0.015, speed_tau=2.0, dir_tau=1.0):
+    def __init__(self, spacing=50.0, speed_noise_amplitude=0.05, dir_noise_amplitude=0.025, speed_tau=2.0, dir_tau=1.0):
         self.spacing = spacing  # s_i, cm
         self.speed_noise_amplitude = speed_noise_amplitude
         self.dir_noise_amplitude = dir_noise_amplitude
