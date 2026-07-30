@@ -12,7 +12,7 @@ def baseline(trial_num=10):
     for trial_num in range(trial_num):
         simulator = RunTrial()
         simulator.assembly_grid_cells()
-        simulator.get_random_walk(debug=False)
+        simulator.get_random_walk()
         simulator.run_trial(error_freq = -1)
         og = simulator.final_og_position
         sim = simulator.final_simulated_position
