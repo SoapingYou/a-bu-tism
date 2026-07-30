@@ -13,10 +13,16 @@ def baseline(trial_num=10):
         simulator = RunTrial()
         simulator.assembly_grid_cells()
         simulator.get_random_walk(debug=False)
+        simulator.run_trial(error_freq = -1)
         og = simulator.final_og_position
         sim = simulator.final_simulated_position
-        euclidean_pos_error(sim_vec=sim, true_vec=og)
+        err = euclidean_pos_error(sim_vec=sim, true_vec=og)
+        print(sim)
+        print(og)
+        print(err)
+
+baseline(1)
         
-        
+
 
     

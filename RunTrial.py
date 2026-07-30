@@ -31,43 +31,41 @@ class RunTrial:
         # for module in self.modules:
         #     module.add_cells(self.NUM_SPATIAL_PHASES,self.NUM_SPATIAL_PHASES)
 
-    def get_random_walk(self, debug=True):
-        displacements = NewRandomWalk()
-        displacements_x = np.array(displacements[0])
-        displacements_y = np.array(displacements[1])
-        self.ts = displacements[2]
-        self.simlen = displacements[3]
-        self.final_og_position = displacements[4]
+    def get_random_walk(self):
+        _outputs = NewRandomWalk()
+        self.speed = np.array(_outputs[0])
+        self.head_dir = np.array(_outputs[1])
+        self.ts = _outputs[2]
+        self.simlen = _outputs[3]
+        self.final_og_position = _outputs[4]
 
-        if (debug == True):
-            # check ts works yo
-            print(displacements[0], displacements[1])
-
-        # original velocities
-        self.og_velocities = np.zeros((2, self.simlen))
-        self.og_velocities[0, :] = np.array(displacements_x) / self.ts
-        self.og_velocities[1, :] = np.array(displacements_y) / self.ts
-
-    def run_trial(self, error_freq: int):
+    def run_trial(self, error_freq: int = -1):
         """
         Simulates the grid cell phases changing by velocity of the mouse
 
         :param int error_freq: 
             -1 if you just want to call get_location() at the end.
             otherwise frequency per time step that get_location() 
-            is called to determine time-based error.
+            is called to determine time-based error. 
+            will call get_location() at end no matter what.
             e.g., 1 for calling get_location every timestep. 
         """
-
+        if(error_freq == -1): self.simulated_locations=np.zeros((1,3))
+        else: self.simulated_locations=np.zeros((int(np.floor(self.simlen/error_freq)), 3))
         for t in range(self.simlen):
             # simulate velocity (with error).
-            t_velocity = np.zeros(2)
-            t_velocity[0] = self.og_velocities[0, t]
-            t_velocity[1] = self.og_velocities[1, t]
+            t_speed = self.speed[t]
+            t_headdir = self.head_dir[t]
 
             # update phase
             for i in range(self.NUM_MODULES):
-                self.modules[i].update(t_velocity, self.ts)
+                self.modules[i].update(t_speed, t_headdir, self.ts)
+
+            #see current sim location & error
+            if(error_freq != -1 and t % error_freq==0):
+                self.simulated_locations[int(t/error_freq)][0] = t
+                self.simulated_locations[int(t/error_freq)][1:] = self.get_location()
+
         self.final_simulated_position = self.get_location()
         return self.final_simulated_position
 

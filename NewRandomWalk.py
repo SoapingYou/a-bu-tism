@@ -119,7 +119,7 @@ def main():
     # print(accessiblehead)
     # print(accessiblexlist)
     # print(accessibleylist)
-    final_position = np.array(accessiblexlist[-1],accessibleylist[-1])
+    final_position = np.array([accessiblexlist[-1],accessibleylist[-1]])
     totalhomedist = mt.sqrt((accessiblexlist[simlen-1]**2) + (accessibleylist[simlen-1]**2))
     print("the mouse moved this far:", totalhomedist)
     return accessiblespeed, accessiblehead, timestep, simlen, final_position
