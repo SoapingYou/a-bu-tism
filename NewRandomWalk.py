@@ -2,6 +2,7 @@ def main():
     ## modules for random number generation, angle of walk generation, and graph generation
     import random as rd
     import math as mt
+    import numpy as np
 
     ##setting parameters of simulation
     timestep = float(input("What is the resolution(in seconds) of your simulation(float, 0.001 recommended)?"))
@@ -116,9 +117,9 @@ def main():
     print("this is the mouse's speed each timestep:", accessiblespeed)
     # print(accessiblespeed)
     # print(accessiblehead)
-    print(accessiblexlist)
-    print(accessibleylist)
-    print(accessiblexlist[-1], accessibleylist[-1])
+    # print(accessiblexlist)
+    # print(accessibleylist)
+    final_position = np.array(accessiblexlist[-1],accessibleylist[-1])
     totalhomedist = mt.sqrt((accessiblexlist[simlen-1]**2) + (accessibleylist[simlen-1]**2))
     print("the mouse moved this far:", totalhomedist)
-    return accessibledx, accessibledy, timestep, simlen
+    return accessiblespeed, accessiblehead, timestep, simlen, final_position
