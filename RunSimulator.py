@@ -1,5 +1,4 @@
 from RunTrial import RunTrial
-from PathPlotter import PathPlotter
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -59,7 +58,8 @@ class RunSimulator:
 
     def baseline(self, trial_num=10, 
                 speed_noise_amplitude=0.05, headdir_noise_amplitude=0.025,
-                error_freq=-1, ts=0.001, sim=20000, deltahead=2.4):
+                error_freq=-1, ts=0.001, sim=20000, deltahead=2.4,
+                NUM_OF_MODS=10, NUM_SPATIAL_PHASES=20, NUM_NEURONS_P_PHASE=20):
         """
         runs simulation
         
@@ -80,7 +80,10 @@ class RunSimulator:
         self.all_error_over_time = [] # trial_num x (floor(simlen/error_freq))
         
         for trial_num in range(trial_num):
-            simulator = RunTrial(speed_noise_amplitude=speed_noise_amplitude,
+            simulator = RunTrial(NUM_OF_MODS=NUM_OF_MODS, 
+                                 NUM_SPATIAL_PHASES=NUM_SPATIAL_PHASES, 
+                                 NUM_NEURONS_P_PHASE=NUM_NEURONS_P_PHASE,
+                                 speed_noise_amplitude=speed_noise_amplitude,
                                 headdir_noise_amplitude=headdir_noise_amplitude,
                                 ts = ts, simlen = sim, deltahead=deltahead)
             simulator.assembly_grid_cells()

@@ -10,7 +10,8 @@ import numpy as np
 class RunTrial:
     def __init__(self, NUM_OF_MODS=10, NUM_SPATIAL_PHASES=20, NUM_NEURONS_P_PHASE=20, 
                  speed_noise_amplitude = 0.05, headdir_noise_amplitude=0.025,
-                 ts=0.001, simlen=20000,deltahead=2.4):
+                 ts=0.001, simlen=20000,deltahead=2.4,
+                 spacing_min=25, scaling=1.65):
         self.NUM_MODULES = NUM_OF_MODS
         self.NUM_SPATIAL_PHASES = NUM_SPATIAL_PHASES
         self.NUM_NEURONS_P_PHASE = NUM_NEURONS_P_PHASE
@@ -25,6 +26,9 @@ class RunTrial:
         self.speed_noise_amplitude = speed_noise_amplitude
         self.headdir_noise_amplitude = headdir_noise_amplitude
 
+        self.spacing_min = spacing_min # cm, grid cell assembly
+        self.scaling = scaling # ratio, grid cell assembly
+
     # arbitrary numbers, adjust till it looks right ;) . OR replace w a better func, idrc
     # ? make gaussian
     def hex_basis_to_cart(self, u, v):
@@ -32,10 +36,10 @@ class RunTrial:
         y = np.sqrt(3) / 2 * v
         return x, y
 
-    def assembly_grid_cells(self, spacing_min=25, scaling=1.65):
+    def assembly_grid_cells(self):
         ''' generate grid cell structure of NUM_MODULES modules,
         each with 20 spatial phases, 20 neurons per phase'''
-        self.s_is = [spacing_min * (scaling ** i) for i in range(self.NUM_MODULES)]
+        self.s_is = [self.spacing_min * (self.scaling ** i) for i in range(self.NUM_MODULES)]
         self.modules = [Module(spacing=self.s_is[i], speed_noise_amplitude=self.speed_noise_amplitude, 
                                dir_noise_amplitude=self.headdir_noise_amplitude)
                         for i in range(self.NUM_MODULES)]
