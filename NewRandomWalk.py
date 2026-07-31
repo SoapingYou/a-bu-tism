@@ -3,7 +3,7 @@ import random as rd
 import math as mt
 import numpy as np
 
-from TurtlePlotter import TurtlePlotter
+from PathPlotter import PathPlotter
 
 
 def main(user_input=False, plot_turtle=False, **kwargs):
@@ -91,7 +91,7 @@ def main(user_input=False, plot_turtle=False, **kwargs):
 
     simloop()
     if(plot_turtle):
-        turtleplotter = TurtlePlotter()
+        turtleplotter = PathPlotter()
         turtleplotter.turtlebit(accessiblespeed, accessiblexlist, accessibleylist)
     ##print("this is the mouse's change each in x timestep:",accessibledx)
     ##print("this is the mouse's change in y each timestep:",accessibledy)
@@ -100,7 +100,6 @@ def main(user_input=False, plot_turtle=False, **kwargs):
     # print(accessiblehead)
     # print(accessiblexlist)
     # print(accessibleylist)
-    final_position = np.array([accessiblexlist[-1],accessibleylist[-1]])
     totalhomedist = mt.sqrt((accessiblexlist[simlen-1]**2) + (accessibleylist[simlen-1]**2))
     print("the mouse moved this far:", totalhomedist)
-    return accessiblespeed, accessiblehead, timestep, simlen, accessiblexlist, accessibleylist
+    return accessiblespeed, accessiblehead, accessiblexlist, accessibleylist

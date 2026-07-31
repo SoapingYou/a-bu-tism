@@ -9,13 +9,15 @@ import numpy as np
 
 class RunTrial:
     def __init__(self, NUM_OF_MODS=10, NUM_SPATIAL_PHASES=20, NUM_NEURONS_P_PHASE=20, 
-                 speed_noise_amplitude = 0.05, headdir_noise_amplitude=0.025):
+                 speed_noise_amplitude = 0.05, headdir_noise_amplitude=0.025,
+                 ts=0.001, simlen=20000,deltahead=2.4):
         self.NUM_MODULES = NUM_OF_MODS
         self.NUM_SPATIAL_PHASES = NUM_SPATIAL_PHASES
         self.NUM_NEURONS_P_PHASE = NUM_NEURONS_P_PHASE
 
-        self.ts = 0.001  # in seconds, timestep
-        self.simlen = 1000  # of timesteps, simulation length
+        self.ts = ts  # in seconds, timestep
+        self.simlen = simlen  # of timesteps, simulation length
+        self.deltahead = deltahead# in degrees
 
         self.speed = np.zeros(1)  # cm / s
         self.head_dir = np.zeros(1)  # radians
@@ -34,20 +36,19 @@ class RunTrial:
         ''' generate grid cell structure of NUM_MODULES modules,
         each with 20 spatial phases, 20 neurons per phase'''
         self.s_is = [spacing_min * (scaling ** i) for i in range(self.NUM_MODULES)]
-        self.modules = [Module(spacing=self.s_is[i], speed_noise_amplitude=self.speed_noise_amplitude
-                               , dir_noise_amplitude=self.headdir_noise_amplitude)
+        self.modules = [Module(spacing=self.s_is[i], speed_noise_amplitude=self.speed_noise_amplitude, 
+                               dir_noise_amplitude=self.headdir_noise_amplitude)
                         for i in range(self.NUM_MODULES)]
         # for module in self.modules:
         #     module.add_cells(self.NUM_SPATIAL_PHASES,self.NUM_SPATIAL_PHASES)
 
     def get_random_walk(self): #figure out a better way to structure ts </3
-        _outputs = NewRandomWalk(user_input=False, plot_turtle=False, timestep=0.001, simlen=20_000, deltaheading=2.4)
+        _outputs = NewRandomWalk(user_input=False, plot_turtle=False, 
+                                 timestep=self.ts, simlen=self.simlen, deltaheading=self.deltahead)
         self.speed = np.array(_outputs[0])
         self.head_dir = np.array(_outputs[1])
-        self.ts = _outputs[2]
-        self.simlen = _outputs[3]
-        self.og_position_x = _outputs[4]
-        self.og_position_y = _outputs[5]
+        self.og_position_x = _outputs[2]
+        self.og_position_y = _outputs[3]
 
     def run_trial(self, error_freq: int = -1):
         """

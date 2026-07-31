@@ -1,4 +1,5 @@
 from RunTrial import RunTrial
+from PathPlotter import PathPlotter
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -58,12 +59,20 @@ class RunSimulator:
 
     def baseline(self, trial_num=10, 
                 speed_noise_amplitude=0.05, headdir_noise_amplitude=0.025,
-                error_freq=-1):
+                error_freq=-1, ts=0.001, sim=20000, deltahead=2.4):
         """
-        computes distance of 2 coordinate pairs
+        runs simulation
         
-        :param np.ndarray (2,) sim_vec: simulated vector
-        :param np.ndarray (2,) true_vec: true vector
+        :param int trial_num:  # of trials ran
+        :param float speed_noise_amplitude:  speed noise amplitude
+        :param float headdir_noise_amplitude:  head direction noise amplitude
+        :param int error_freq: frequency in simulation that get_location() is 
+                                called to compare error over time.
+        :param float ts:  time step
+        :param int sim:  simulation length in timesteps
+        :param deltahead: max head change angle in one timestep
+
+        no rt, but makes all_final_drift, all_mean_error, all_rmse, and all_error_over_time available
         """
         self.all_final_drift = np.zeros(trial_num)
         self.all_mean_error = np.zeros(trial_num)
@@ -72,7 +81,8 @@ class RunSimulator:
         
         for trial_num in range(trial_num):
             simulator = RunTrial(speed_noise_amplitude=speed_noise_amplitude,
-                                headdir_noise_amplitude=headdir_noise_amplitude)
+                                headdir_noise_amplitude=headdir_noise_amplitude,
+                                ts = ts, simlen = sim, deltahead=deltahead)
             simulator.assembly_grid_cells()
             simulator.get_random_walk()
             simulator.run_trial(error_freq = error_freq)
@@ -107,12 +117,3 @@ class RunSimulator:
             print(self.sim_positions[-1,1:])
 
 
-master = RunSimulator()
-master.baseline(10, error_freq=1)
-print(master.average_errors(master.all_final_drift))
-print(master.average_errors(master.all_mean_error))
-print(master.average_errors(master.all_rmse))
-x = master.sim_positions[:,0]
-y = np.mean(master.all_error_over_time, axis=0)
-plt.plot(x,y)
-plt.show()
