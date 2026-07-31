@@ -59,7 +59,8 @@ class RunSimulator:
     def baseline(self, trial_num=10, 
                 speed_noise_amplitude=0.05, headdir_noise_amplitude=0.025,
                 error_freq=-1, ts=0.001, sim=20000, deltahead=2.4,
-                NUM_OF_MODS=10, NUM_SPATIAL_PHASES=20, NUM_NEURONS_P_PHASE=20):
+                NUM_OF_MODS=10, NUM_SPATIAL_PHASES=20, NUM_NEURONS_P_PHASE=20,
+                seed=67):
         """
         runs simulation
         
@@ -85,7 +86,7 @@ class RunSimulator:
                                  NUM_NEURONS_P_PHASE=NUM_NEURONS_P_PHASE,
                                  speed_noise_amplitude=speed_noise_amplitude,
                                 headdir_noise_amplitude=headdir_noise_amplitude,
-                                ts = ts, simlen = sim, deltahead=deltahead)
+                                ts = ts, simlen = sim, deltahead=deltahead, seed=seed)
             simulator.assembly_grid_cells()
             simulator.get_random_walk()
             simulator.run_trial(error_freq = error_freq)

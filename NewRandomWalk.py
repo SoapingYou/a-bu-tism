@@ -6,7 +6,7 @@ import numpy as np
 from PathPlotter import PathPlotter
 
 
-def main(user_input=False, plot_turtle=False, **kwargs):
+def main(user_input=False, plot_turtle=False, seed=67, **kwargs):
     ## setting parameters of simulation
     if user_input:
         timestep = float(input("What is the resolution(in seconds) of your simulation(float, 0.001 recommended)?"))
@@ -30,6 +30,7 @@ def main(user_input=False, plot_turtle=False, **kwargs):
 
     ## generating a small turn in the animal's head direction
     def gensmallangle():
+        rd.seed(seed)
         instangle = rd.randint(-180, 180)
         instrad = (instangle / 180) * mt.pi        ## generate an angle in radians
         smallinstrad = (instrad / 360) * ((deltaheading * 1000) * timestep)  ## generate a small angle for how much
@@ -37,6 +38,7 @@ def main(user_input=False, plot_turtle=False, **kwargs):
         return smallinstrad
 
     def genspeed():
+        rd.seed(seed)
         instspeed = rd.randint(-1000, 1000) * timestep
         return instspeed
 

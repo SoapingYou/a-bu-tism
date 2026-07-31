@@ -11,7 +11,7 @@ class RunTrial:
     def __init__(self, NUM_OF_MODS=10, NUM_SPATIAL_PHASES=20, NUM_NEURONS_P_PHASE=20, 
                  speed_noise_amplitude = 0.05, headdir_noise_amplitude=0.025,
                  ts=0.001, simlen=20000,deltahead=2.4,
-                 spacing_min=25, scaling=1.65):
+                 spacing_min=25, scaling=1.65, seed=67):
         self.NUM_MODULES = NUM_OF_MODS
         self.NUM_SPATIAL_PHASES = NUM_SPATIAL_PHASES
         self.NUM_NEURONS_P_PHASE = NUM_NEURONS_P_PHASE
@@ -28,6 +28,8 @@ class RunTrial:
 
         self.spacing_min = spacing_min # cm, grid cell assembly
         self.scaling = scaling # ratio, grid cell assembly
+
+        self.seed=seed
 
     # arbitrary numbers, adjust till it looks right ;) . OR replace w a better func, idrc
     # ? make gaussian
@@ -48,7 +50,8 @@ class RunTrial:
 
     def get_random_walk(self): #figure out a better way to structure ts </3
         _outputs = NewRandomWalk(user_input=False, plot_turtle=False, 
-                                 timestep=self.ts, simlen=self.simlen, deltaheading=self.deltahead)
+                                 timestep=self.ts, simlen=self.simlen, deltaheading=self.deltahead,
+                                 seed=self.seed)
         self.speed = np.array(_outputs[0])
         self.head_dir = np.array(_outputs[1])
         self.og_position_x = _outputs[2]
