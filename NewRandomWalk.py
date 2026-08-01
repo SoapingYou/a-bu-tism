@@ -30,7 +30,7 @@ def main(user_input=False, plot_turtle=False, seed=67, **kwargs):
 
     ## generating a small turn in the animal's head direction
     def gensmallangle():
-        rd.seed(seed)
+        # rd.seed(seed)
         instangle = rd.randint(-180, 180)
         instrad = (instangle / 180) * mt.pi        ## generate an angle in radians
         smallinstrad = (instrad / 360) * ((deltaheading * 1000) * timestep)  ## generate a small angle for how much
@@ -38,7 +38,7 @@ def main(user_input=False, plot_turtle=False, seed=67, **kwargs):
         return smallinstrad
 
     def genspeed():
-        rd.seed(seed)
+        # rd.seed(seed)
         instspeed = rd.randint(-1000, 1000) * timestep
         return instspeed
 
