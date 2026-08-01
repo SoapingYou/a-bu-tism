@@ -91,7 +91,7 @@ class RunSimulator:
             simulator.get_random_walk()
             simulator.run_trial(error_freq = error_freq)
 
-            # og positions: 50000 x 2 shape [[xt],[yt]]
+            # og positions: simlen x 2 shape [[xt],[yt]]
             self.og_positions = np.array([simulator.og_position_x,simulator.og_position_y])
             self.og_positions = self.og_positions.T
             # simulated positions: floor(simlen / errorfreq) x 3 shape [[ti,xi,yi],...]
