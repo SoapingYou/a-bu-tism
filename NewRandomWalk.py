@@ -58,14 +58,16 @@ def main(user_input=False, plot_turtle=False, seed=67, **kwargs):
 
         def headupdate(self):
             self.headdirection += gensmallangle()
-            if self.xpos >= 1000:
-                self.headdirection = mt.pi
-            if self.xpos <= -1000:
-                self.headdirection = 0
-            if self.ypos >= 1000:
-                self.headdirection = 3*mt.pi/2
-            if self.ypos <= -1000:
-                self.headdirection = mt.pi/2
+            def turnaround():
+                if self.xpos >= 1000:
+                    self.headdirection = mt.pi
+                if self.xpos <= -1000:
+                    self.headdirection = 0
+                if self.ypos >= 1000:
+                    self.headdirection = 3*mt.pi/2
+                if self.ypos <= -1000:
+                    self.headdirection = mt.pi/2
+                    return self.headdirection
             return self.headdirection
 
         def speedupdate(self):
