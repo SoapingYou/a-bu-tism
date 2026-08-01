@@ -1,2 +1,2 @@
-# tis_bu indira was here 
+# tis_bu 
 bu rise project tristan indira sophie alex matthew
