@@ -1,10 +1,13 @@
+import _csv
+
 from RunTrial import RunTrial
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 class RunSimulator:
-    def __init__(self):
+    def __init__(self, csv_writer: _csv.Writer):
+        self.csv_writer = csv_writer
         pass
 
     def distance_error(self, sim_vec: np.ndarray, true_vec: np.ndarray):
@@ -81,7 +84,7 @@ class RunSimulator:
         self.all_error_over_time = [] # trial_num x (floor(simlen/error_freq))
         
         for trial_num in range(trial_num):
-            simulator = RunTrial(NUM_OF_MODS=NUM_OF_MODS, 
+            simulator = RunTrial(self.csv_writer, NUM_OF_MODS=NUM_OF_MODS, 
                                  NUM_SPATIAL_PHASES=NUM_SPATIAL_PHASES, 
                                  NUM_NEURONS_P_PHASE=NUM_NEURONS_P_PHASE,
                                  speed_noise_amplitude=speed_noise_amplitude,

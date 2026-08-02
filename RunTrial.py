@@ -1,18 +1,24 @@
 # Written by Sophie Yu. Finished 2:51 AM. Mistakes may have been made. 
 
+from typing import TextIO
+
 from NewRandomWalk import main as NewRandomWalk
 from grid_cells import Module
 from phases_to_location import phasesToLocation1DProgressive
 
 import numpy as np
+import _csv
 
 
 class RunTrial:
-    def __init__(self, NUM_OF_MODS=10, NUM_SPATIAL_PHASES=20, NUM_NEURONS_P_PHASE=20,
+    def __init__(self, csv_writer: _csv.Writer, NUM_OF_MODS=10, NUM_SPATIAL_PHASES=20, NUM_NEURONS_P_PHASE=20,
                  speed_noise_amplitude=0.05, headdir_noise_amplitude=0.025,
                  speed_tau=2.0, dir_tau=1.0,
                  ts=0.001, simlen=20000, deltahead=2.4,
                  spacing_min=25, scaling=1.65, seed=67):
+
+        self.csv_writer = csv_writer
+
         self.NUM_MODULES = NUM_OF_MODS
         self.NUM_SPATIAL_PHASES = NUM_SPATIAL_PHASES
         self.NUM_NEURONS_P_PHASE = NUM_NEURONS_P_PHASE
@@ -101,6 +107,10 @@ class RunTrial:
             # update phase
             for i in range(self.NUM_MODULES):
                 self.modules[i].update(t_speed, t_headdir, self.ts)
+
+            p_isx = [mod.phase[0] for mod in self.modules]
+            p_isy = [mod.phase[1] for mod in self.modules]
+            self.csv_writer.writerow([t, *p_isx, *p_isy])
 
             # see current sim location & error
             if ((error_freq != -1 and t % error_freq == 0)):
