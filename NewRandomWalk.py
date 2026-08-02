@@ -1,5 +1,6 @@
-import math as mt
+## modules for random number generation, angle of walk generation, and graph generation
 import random as rd
+import math as mt
 import numpy as np
 
 from PathPlotter import PathPlotter
@@ -57,29 +58,16 @@ def main(user_input=False, plot_turtle=False, seed=67, **kwargs):
 
         def headupdate(self):
             self.headdirection += gensmallangle()
-            limit = 1000
-            border_zone = 100
-            d_right = limit - self.xpos
-            d_left = self.xpos - (-limit)
-            d_top = limit - self.ypos
-            d_bottom = self.ypos - (-limit)
-
-            max_steer = (deltaheading * 1000) * timestep * (mt.pi / 180)
-            if d_right < border_zone:
-                steer_factor = (1.0 - d_right / border_zone)
-                self.headdirection += max_steer * steer_factor * (1 if mt.sin(self.headdirection) > 0 else -1)
-            elif d_left < border_zone:
-                steer_factor = (1.0 - d_left / border_zone)
-                self.headdirection += max_steer * steer_factor * (1 if mt.sin(self.headdirection) < 0 else -1)
-
-            if d_top < border_zone:
-                steer_factor = (1.0 - d_top / border_zone)
-                self.headdirection += max_steer * steer_factor * (-1 if mt.cos(self.headdirection) > 0 else 1)
-            elif d_bottom < border_zone:
-                steer_factor = (1.0 - d_bottom / border_zone)
-                self.headdirection += max_steer * steer_factor * (1 if mt.cos(self.headdirection) > 0 else -1)
-
-            self.headdirection = self.headdirection % (2 * mt.pi)
+            def turnaround():
+                if self.xpos >= 1000:
+                    self.headdirection = mt.pi
+                if self.xpos <= -1000:
+                    self.headdirection = 0
+                if self.ypos >= 1000:
+                    self.headdirection = 3*mt.pi/2
+                if self.ypos <= -1000:
+                    self.headdirection = mt.pi/2
+                    return self.headdirection
             return self.headdirection
 
         def speedupdate(self):
