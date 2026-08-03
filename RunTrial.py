@@ -12,7 +12,7 @@ class RunTrial:
                  speed_noise_amplitude=0.05, headdir_noise_amplitude=0.025,
                  speed_tau=2.0, dir_tau=1.0,
                  ts=0.001, simlen=20000, deltahead=2.4,
-                 spacing_min=25, scaling=1.7, seed=67):
+                 spacing_min=25, scaling=1.75, seed=67):
         self.NUM_MODULES = NUM_OF_MODS
         self.NUM_SPATIAL_PHASES = NUM_SPATIAL_PHASES
         self.NUM_NEURONS_P_PHASE = NUM_NEURONS_P_PHASE
