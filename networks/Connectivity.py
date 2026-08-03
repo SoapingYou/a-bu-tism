@@ -84,6 +84,7 @@ class Connectivity:
                 A = self.aperiodic_A() #rn it just returns 1, but later will be a function of xi
             biases[i] = A * (1 - self.velocity_gain * np.dot(self.preferred_vectors[i], velocity))
         return biases
+    
 
         
     def derive_new_activity(self, activity:np.ndarray, velocity:np.ndarray = np.zeros(2)):

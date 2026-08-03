@@ -95,7 +95,8 @@ class GridCellModule:
                                            nonlinearity=nonlinearity, periodicity=periodicity,
                                            init_bump_scaling_const=init_bump_scaling_const)
     def firing_rates(self):
-        self.can.get_firing_rates()
+        #self.can.get_firing_rates()
+        pass
 
     def get_phase(self):
         """
@@ -103,10 +104,9 @@ class GridCellModule:
         """
         return self.can.get_phase() #replace 0 with orientation of module
 
-gridcell_test = GridCellModule(spacing=50.0, orientation=0, n=20, K = 1)
-gridcell_test.get_can(gamma=0.01, beta=0.005,init_bump_scaling_const=10, K=10,center=0)
+gridcell_test = GridCellModule(spacing=50.0, orientation=0, n=40, K = 1)
+gridcell_test.can = gridcell_test.get_can(gamma=0.1, beta=0.07,init_bump_scaling_const=10, K=1,center=0)
 #plt.imshow(gridcell_test.can.conn_obj.weights_ij)
-for i in range(10000):
-    gridcell_test.can.step(velocity=np.array([0,0]))
+for i in range(1000):
+    gridcell_test.can.step(velocity=np.array([1,5]))
 gridcell_test.can.plot_activity()
-

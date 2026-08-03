@@ -45,10 +45,14 @@ class ContinuousAttractorNetwork:
 
         and the actual grid cell pos / phase is calculated by position in array
         """
-        rng = np.random.default_rng()
-        _randos = rng.integers(0, 6, size=(self.N))
+        _direction_idx = np.zeros(self.N, dtype=int)
+        idx = 0
+        for i in range(self.n):
+            for j in range(self.n):
+                _direction_idx[idx] = 3 * (j % 2) + (i % 3) # tiles N in [[0,3],[1,4],[2,5]]
+                idx += 1 # _direction_idx is kinda like [0,3,0,3...,1,4,1,4...2,5,2,5...0,3,0,3...etc]
         _preferred_directionality = np.full((self.N), np.pi/3)
-        _preferred_directionality = _preferred_directionality*_randos
+        _preferred_directionality = _preferred_directionality*_direction_idx
         preferred_vectors = np.zeros((self.N, 2))
         preferred_vectors[:,0] = np.cos(_preferred_directionality)
         preferred_vectors[:,1] = np.sin(_preferred_directionality)
