@@ -43,6 +43,9 @@ class RunTrial:
 
         self.seed = seed
 
+        self.x_trig_dist = 0.0
+        self.y_trig_dist = 0.0
+
         self.rng = np.random.default_rng(seed)
 
     # arbitrary numbers, adjust till it looks right ;) . OR replace w a better func, idrc
@@ -118,13 +121,13 @@ class RunTrial:
         data_x = np.zeros((self.NUM_MODULES, 2))
         data_x[:, 0] = self.s_is
         data_x[:, 1] = phases[:, 0]
-        x_trig_dist = phasesToLocation1DProgressive(data_x)
+        self.x_trig_dist = phasesToLocation1DProgressive(data_x, self.x_trig_dist)
 
         data_y = np.zeros((self.NUM_MODULES, 2))
         data_y[:, 0] = self.s_is
         data_y[:, 1] = phases[:, 1]
-        y_trig_dist = phasesToLocation1DProgressive(data_y)
-        return self.hex_basis_to_cart(x_trig_dist, y_trig_dist)
+        self.y_trig_dist = phasesToLocation1DProgressive(data_y, self.y_trig_dist)
+        return self.hex_basis_to_cart(self.x_trig_dist, self.y_trig_dist)
 
     def OU_increment(self, noise, tau, amp, dt):
         """
