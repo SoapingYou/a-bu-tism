@@ -1,13 +1,15 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import os, sys
 
 
 # Get the directory of the current script
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Add the parent directory to the Python path environment
+# Add networks directory to the Python path environment
 sys.path.append(current_dir+"/networks")
-from ContinuousAttractor import ContinuousAttractorNetwork
+
+from networks.ContinuousAttractor import ContinuousAttractorNetwork
 
 
 class Module:
@@ -78,23 +80,33 @@ class GridCellModule:
         self.can = ContinuousAttractorNetwork(n, tau=0.01, dt = 0.001, 
                                                a=1, gamma = 0.01863905325, beta= 0.01775147929, l=1, velocity_gain=velocity_gain, 
                                                periodicity=True,
-                                               nonlinearity = "rect")
+                                               nonlinearity = "rect", init_bump_scaling_const=10,center=0)
         # self.can = self.get_can() 
 
     def get_can(self, tau=0.01, dt = 0.001,  
-                     a=1, gamma = 0.01863905325, beta= 0.01775147929, l=1, K=1,
-                     nonlinearity = "rect", periodicity = True):
+                     a=1, gamma = 0.01863905325, beta= 0.01775147929, l=1, K=1,center=0,
+                     nonlinearity = "rect", periodicity = True, init_bump_scaling_const=10,):
         """
         call manually after if you want to change parameters of can.
         """
         velocity_gain = K/self.spacing
         return ContinuousAttractorNetwork(n=self.n, tau=tau, dt=dt,
                                            a=a, gamma=gamma, beta=beta, l=l, velocity_gain=velocity_gain, 
-                                           nonlinearity=nonlinearity, periodicity=periodicity)
+                                           nonlinearity=nonlinearity, periodicity=periodicity,
+                                           init_bump_scaling_const=init_bump_scaling_const)
     def firing_rates(self):
         self.can.get_firing_rates()
-    def phase(self):
-        self.can.get_phase()
+
+    def get_phase(self):
+        """
+        runs phase decoder... 
+        """
+        return self.can.get_phase() #replace 0 with orientation of module
 
 gridcell_test = GridCellModule(spacing=50.0, orientation=0, n=20, K = 1)
-gridcell_test.can.step(velocity=np.array([1.0, 0.0]))
+gridcell_test.get_can(gamma=0.01, beta=0.005,init_bump_scaling_const=10, K=10,center=0)
+#plt.imshow(gridcell_test.can.conn_obj.weights_ij)
+for i in range(10000):
+    gridcell_test.can.step(velocity=np.array([0,0]))
+gridcell_test.can.plot_activity()
+

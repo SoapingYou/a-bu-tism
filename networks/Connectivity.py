@@ -38,13 +38,26 @@ class Connectivity:
         returns 3D array of displacements (N,N,2)
         """
         distances_sqrd = np.zeros((self.N, self.N))
-        for i in range(self.n):
-            for j in range(self.n):
-                _shift_displacement = self.l * self.preferred_vectors[i*self.n+j]
-                for k in range(self.n):
-                    for l in range(self.n):
-                        displacement = (pos[i*self.n+j]-pos[k*self.n+l]) - _shift_displacement
-                        distances_sqrd[i*self.n+j, k*self.n+l] = np.linalg.norm(displacement)**2
+        _shift_displacement = self.l * self.preferred_vectors
+        delta = np.zeros((self.N,self.N,2))
+
+        for i in range(self.N):
+            for j in range(self.N):
+                delta[i,j] = pos[i] - pos[j]
+
+        delta -= _shift_displacement
+        # wrap delta in triangular lattice. delta is currently in cartesian x,y difs
+        i = delta[:,:,0] - delta[:,:,1]/np.sqrt(3)  # i is NxN
+        j = 2*delta[:,:,1]/np.sqrt(3) # j is NxN
+
+        i = i - np.round(i/self.n)*self.n 
+        j = j - np.round(j/self.n)*self.n
+
+        x = i+j/2 # x is NxN
+        y=j*np.sqrt(3)/2 #y is NxN
+
+        displacements = np.array([x,y]) # 2xNxN
+        distances_sqrd = displacements[0]**2+displacements[1]**2 # NxN
         return distances_sqrd
 
     def get_weights(self):
@@ -69,7 +82,7 @@ class Connectivity:
             A = 1
             if(not self.periodicity):
                 A = self.aperiodic_A() #rn it just returns 1, but later will be a function of xi
-            biases[i] = A * (1+self.velocity_gain * np.dot(self.preferred_vectors[i], velocity))
+            biases[i] = A * (1 - self.velocity_gain * np.dot(self.preferred_vectors[i], velocity))
         return biases
 
         
