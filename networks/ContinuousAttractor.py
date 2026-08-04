@@ -198,7 +198,7 @@ class ContinuousAttractorNetwork:
         self.phase_pos = np.array([new_i, new_j])
 
     def get_phase(self):
-        self.phase_change = (self.phase_pos-self.init_phase_pos) % self.lambda_net * 2 * np.pi
+        self.phase_change = ((self.unwrapped_pos-self.init_phase_pos) % self.lambda_net) / self.lambda_net * 2 * np.pi
         return self.phase_change
     
     def plot_activity(self):
