@@ -151,4 +151,5 @@ fig, axes = plt.subplots(1)
 #             )
 
 # plt.show()
+
 gridcell_test.can.plot_activity()

@@ -16,7 +16,7 @@ class ContinuousAttractorNetwork:
         get_phase()"""
         self.n = n
         self.N = n*n
-        self._init_radius = 10
+        self._radius = 10
         self.preferred_vectors, self.pos = self.make_grid() # 1d numpy arrays (N)
         self.activity = self.initialize_bump(center=center, scaling_constant=init_bump_scaling_const) #rectangular neural grid... but we are actually encoding TRIANGULAR LATTICE
         self.conn_obj = Connectivity(n, self.preferred_vectors, self.pos, spacing=spacing,
@@ -24,25 +24,25 @@ class ContinuousAttractorNetwork:
                                      nonlinearity=nonlinearity, periodicity=periodicity, 
                                      dt=dt, tau=tau)
         for _ in range(100):
-            self.step()
-        self.phase_pos = self.initialize_phase(_init_radius = self._init_radius) #triangular
+            self.step(calc_phase=False)
+        self.phase_pos = self.initialize_phase(_radius = self._radius) #triangular
 
-    def initialize_phase(self,_init_radius=7):
+    def initialize_phase(self,_radius=7):
         i = int(self.n/2)
         j = int(self.n/2)
         activity2d = self.activity.reshape(self.n, self.n)
 
         cropped = activity2d[
-            i-_init_radius:i+_init_radius,
-            j-_init_radius:j+_init_radius
+            i-_radius:i+_radius,
+            j-_radius:j+_radius
         ]
 
         # coordinates inside the crop
         di, dj = np.unravel_index(np.argmax(cropped), cropped.shape)
 
         # coordinates in the full grid
-        I = i - _init_radius + di
-        J = j - _init_radius + dj
+        I = i - _radius + di
+        J = j - _radius + dj
 
         return np.array([I,J])
         
@@ -105,30 +105,61 @@ class ContinuousAttractorNetwork:
 
         return np.exp(-distances/scaling_constant) # arbitrary beginning bump
 
-    def step(self, velocity: np.ndarray = np.zeros(2)):
+    def step(self, velocity: np.ndarray = np.zeros(2), calc_phase =True):
         """
         a step basically is 
         tau * dsi/dt + si = phi (sum(wij*sj) + bi) 
         phi is nonlinearity, currently its rect. 
         """
         self.activity = self.conn_obj.derive_new_activity(self.activity,velocity) # 1D array (N)
-        #update phase()
-
+        if(calc_phase):
+            self.update_phase()
+                                                                            
     def update_phase(self):
-        i1 = self.phase_pos[0] - self._init_radius
-        i2 = self.phase_pos[0] + self._init_radius
-        j1 = self.phase_pos[1] - self._init_radius
-        j2 = self.phase_pos[1] + self._init_radius
+        r = self._radius
+        i0, j0 = self.phase_pos          # last known center, in (i, j) lattice-index units
 
-        # ranges
-        # if(i1<0):
-            
-        # self.activity=[(i1-self._init_radius,i+self._init_radius),
-        # (j-self._init_radius,j+self._init_radius)]
-        
-        # WRAP AROUND (TRIANGULARLY) indices
-        #get new phase pos from argmax of this weird wraparound sect
-        pass
+        row_idx = (np.arange(i0 - r, i0 + r) % self.n).astype(int)
+        col_idx = (np.arange(j0 - r, j0 + r) % self.n).astype(int)
+
+        activity_2d = self.activity.reshape((self.n, self.n))
+        window = activity_2d[np.ix_(row_idx, col_idx)]     # shape (2r, 2r), correctly wrapped
+
+        # --- circular mean over the window, instead of argmax ---
+        # row_idx/col_idx aren't contiguous once wrapped, so we can't just do a
+        # normal weighted average of them directly (e.g. indices [38,39,0,1] would
+        # average to ~19.5, which is on the wrong side of the sheet entirely).
+        # Standard fix: map each wrapped index to an angle around the sheet's
+        # circumference, average on the unit circle, then map back to an index.
+        two_pi = 2 * np.pi
+
+        theta_i = row_idx * (two_pi / self.n)
+        theta_j = col_idx * (two_pi / self.n)
+
+        w = window                                   # (2r, 2r) activity weights
+        w_row = w.sum(axis=1)                        # marginal weight per row index
+        w_col = w.sum(axis=0)                         # marginal weight per col index
+
+        # weighted circular mean, row axis
+        sin_i = np.sum(w_row * np.sin(theta_i))
+        cos_i = np.sum(w_row * np.cos(theta_i))
+        mean_theta_i = np.arctan2(sin_i, cos_i) % two_pi
+
+        # weighted circular mean, col axis
+        sin_j = np.sum(w_col * np.sin(theta_j))
+        cos_j = np.sum(w_col * np.cos(theta_j))
+        mean_theta_j = np.arctan2(sin_j, cos_j) % two_pi
+
+        # map angles back to continuous (non-integer) lattice-index coordinates
+        new_i = mean_theta_i * (self.n / two_pi)
+        new_j = mean_theta_j * (self.n / two_pi)
+
+        # --- accumulate UNWRAPPED phase using minimum-image on the STEP only ---
+        step_i = ((new_i - i0 + self.n / 2) % self.n) - self.n / 2
+        step_j = ((new_j - j0 + self.n / 2) % self.n) - self.n / 2
+        self.unwrapped_pos += np.array([step_i, step_j])
+
+        self.phase_pos = np.array([new_i, new_j])
 
     def get_phase(self):
         return 
