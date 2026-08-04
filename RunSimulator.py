@@ -56,9 +56,9 @@ class RunSimulator:
         """
         return np.mean(errors)
 
-    def baseline(self, trial_num=10,
+    def baseline(self, trial_num=10, scaling=1.65,
                  speed_noise_amplitude=0.05, headdir_noise_amplitude=0.025,
-                 error_freq=-1, ts=0.001, sim=20000, deltahead=2.4,
+                 error_freq=-1, ts=0.001, sim=20000, deltahead=2.4, spacing_min=25,
                  NUM_OF_MODS=10, NUM_SPATIAL_PHASES=20, NUM_NEURONS_P_PHASE=20, bio_noise=False,
                  bio_speed_amp=0.05, bio_dir_amp=0.025, bio_speed_tau=2.0, bio_dir_tau=1.0,
                  seed=67):
@@ -73,6 +73,7 @@ class RunSimulator:
         :param float ts:  time step
         :param int sim:  simulation length in timesteps
         :param deltahead: max head change angle in one timestep
+        :param float spacing_min: smallest s_i
 
         no rt, but makes all_final_drift, all_mean_error, all_rmse, and all_error_over_time available
         """
@@ -87,6 +88,7 @@ class RunSimulator:
                                  NUM_NEURONS_P_PHASE=NUM_NEURONS_P_PHASE,
                                  speed_noise_amplitude=speed_noise_amplitude,
                                  headdir_noise_amplitude=headdir_noise_amplitude,
+                                 spacing_min=spacing_min, scaling=scaling,
                                  ts = ts, simlen = sim, deltahead=deltahead, bio_noise=bio_noise,
                                  bio_speed_amp=bio_speed_amp, bio_dir_amp=bio_dir_amp,
                                  bio_speed_tau=bio_speed_tau, bio_dir_tau=bio_dir_tau,

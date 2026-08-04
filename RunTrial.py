@@ -12,7 +12,7 @@ class RunTrial:
                  speed_noise_amplitude=0.05, headdir_noise_amplitude=0.025,
                  speed_tau=2.0, dir_tau=1.0,
                  ts=0.001, simlen=20000, deltahead=2.4,
-                 spacing_min=25, scaling=1.75, bio_noise=False,
+                 spacing_min=25, scaling=1.65, bio_noise=False,
                  bio_speed_amp=0.05, bio_dir_amp=0.025, bio_speed_tau=2.0, bio_dir_tau=1.0,
                  seed=67):
         self.NUM_MODULES = NUM_OF_MODS
