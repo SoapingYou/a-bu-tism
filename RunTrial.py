@@ -12,7 +12,9 @@ class RunTrial:
                  speed_noise_amplitude=0.05, headdir_noise_amplitude=0.025,
                  speed_tau=2.0, dir_tau=1.0,
                  ts=0.001, simlen=20000, deltahead=2.4,
-                 spacing_min=25, scaling=1.75, seed=67):
+                 spacing_min=25, scaling=1.65, bio_noise=False,
+                 bio_speed_amp=0.05, bio_dir_amp=0.025, bio_speed_tau=2.0, bio_dir_tau=1.0,
+                 seed=67):
         self.NUM_MODULES = NUM_OF_MODS
         self.NUM_SPATIAL_PHASES = NUM_SPATIAL_PHASES
         self.NUM_NEURONS_P_PHASE = NUM_NEURONS_P_PHASE
@@ -38,6 +40,12 @@ class RunTrial:
         self.speed_tau = speed_tau  # s
         self.dir_tau = dir_tau  # s
 
+        self.bio_noise = bio_noise  # if there is biological noise (each module receives velocity w/ a different error)
+        self.bio_speed_amp = bio_speed_amp
+        self.bio_speed_tau = bio_speed_tau
+        self.bio_dir_amp = bio_dir_amp
+        self.bio_dir_tau = bio_dir_tau
+
         self.spacing_min = spacing_min  # cm, grid cell assembly
         self.scaling = scaling  # ratio, grid cell assembly
 
@@ -48,8 +56,6 @@ class RunTrial:
 
         self.rng = np.random.default_rng(seed)
 
-    # arbitrary numbers, adjust till it looks right ;) . OR replace w a better func, idrc
-    # ? make gaussian
     def hex_basis_to_cart(self, u, v):
         x = u + 0.5 * v
         y = np.sqrt(3) / 2 * v
@@ -59,9 +65,13 @@ class RunTrial:
         ''' generate grid cell structure of NUM_MODULES modules,
         each with 20 spatial phases, 20 neurons per phase'''
         self.s_is = [self.spacing_min * (self.scaling ** i) for i in range(self.NUM_MODULES)]
-        self.modules = [Module(spacing=self.s_is[i]) for i in range(self.NUM_MODULES)]
-        # for module in self.modules:
-        #     module.add_cells(self.NUM_SPATIAL_PHASES,self.NUM_SPATIAL_PHASES)
+        self.modules = [Module(spacing=self.s_is[i],
+                               bio_noise=self.bio_noise,
+                               speed_tau=self.bio_speed_tau,
+                               speed_amp=self.bio_speed_amp,
+                               dir_tau=self.bio_dir_tau,
+                               dir_amp=self.bio_dir_amp,
+                               ) for i in range(self.NUM_MODULES)]
 
     def get_random_walk(self):  # figure out a better way to structure ts </3
         _outputs = NewRandomWalk(user_input=False, plot_turtle=False,
