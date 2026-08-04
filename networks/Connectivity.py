@@ -87,7 +87,8 @@ class Connectivity:
             A = 1
             if(not self.periodicity):
                 A = self.aperiodic_A() #rn it just returns 1, but later will be a function of xi
-            biases[i] = A * (1 - self.velocity_gain * np.dot(self.preferred_vectors[i], velocity))
+            # velocity = np.array([velocity[0] * self.dt, velocity[1] * self.dt])
+            biases[i] = A * (1 + self.velocity_gain * np.dot(self.preferred_vectors[i], velocity))
         return biases
     
 
