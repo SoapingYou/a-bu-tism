@@ -56,11 +56,12 @@ class RunSimulator:
         """
         return np.mean(errors)
 
-    def baseline(self, trial_num=10, 
-                speed_noise_amplitude=0.05, headdir_noise_amplitude=0.025,
-                error_freq=-1, ts=0.001, sim=20000, deltahead=2.4,
-                NUM_OF_MODS=10, NUM_SPATIAL_PHASES=20, NUM_NEURONS_P_PHASE=20,
-                seed=67):
+    def baseline(self, trial_num=10,
+                 speed_noise_amplitude=0.05, headdir_noise_amplitude=0.025,
+                 error_freq=-1, ts=0.001, sim=20000, deltahead=2.4,
+                 NUM_OF_MODS=10, NUM_SPATIAL_PHASES=20, NUM_NEURONS_P_PHASE=20, bio_noise=False,
+                 bio_speed_amp=0.05, bio_dir_amp=0.025, bio_speed_tau=2.0, bio_dir_tau=1.0,
+                 seed=67):
         """
         runs simulation
         
@@ -79,14 +80,17 @@ class RunSimulator:
         self.all_mean_error = np.zeros(trial_num)
         self.all_rmse = np.zeros(trial_num)
         self.all_error_over_time = [] # trial_num x (floor(simlen/error_freq))
-        
+
         for trial_num in range(trial_num):
-            simulator = RunTrial(NUM_OF_MODS=NUM_OF_MODS, 
-                                 NUM_SPATIAL_PHASES=NUM_SPATIAL_PHASES, 
+            simulator = RunTrial(NUM_OF_MODS=NUM_OF_MODS,
+                                 NUM_SPATIAL_PHASES=NUM_SPATIAL_PHASES,
                                  NUM_NEURONS_P_PHASE=NUM_NEURONS_P_PHASE,
                                  speed_noise_amplitude=speed_noise_amplitude,
-                                headdir_noise_amplitude=headdir_noise_amplitude,
-                                ts = ts, simlen = sim, deltahead=deltahead, seed=seed)
+                                 headdir_noise_amplitude=headdir_noise_amplitude,
+                                 ts = ts, simlen = sim, deltahead=deltahead, bio_noise=bio_noise,
+                                 bio_speed_amp=bio_speed_amp, bio_dir_amp=bio_dir_amp,
+                                 bio_speed_tau=bio_speed_tau, bio_dir_tau=bio_dir_tau,
+                                 seed=seed)
             simulator.assembly_grid_cells()
             simulator.get_random_walk()
             simulator.run_trial(error_freq = error_freq)
@@ -98,17 +102,17 @@ class RunSimulator:
             self.sim_positions = simulator.simulated_locations
 
             # ending errors
-            self.final_drift_i = self.distance_error(sim_vec=self.sim_positions[-1,1:], 
+            self.final_drift_i = self.distance_error(sim_vec=self.sim_positions[-1,1:],
                                            true_vec=self.og_positions[-1,:])
 
             # errors over time
             self.trimmed_og_pos = self.og_positions[self.sim_positions[:,0].astype(int),:]
             self.trimmed_sim_pos = self.sim_positions[:,1:]
-            self.mean_error_i = self.mean_error(self.trimmed_sim_pos, 
+            self.mean_error_i = self.mean_error(self.trimmed_sim_pos,
                                                 self.trimmed_og_pos)
-            self.rmse_i = self.rmse(self.trimmed_sim_pos, 
+            self.rmse_i = self.rmse(self.trimmed_sim_pos,
                                                 self.trimmed_og_pos)
-            self.error_over_time_i = self.error_over_time(self.trimmed_sim_pos, 
+            self.error_over_time_i = self.error_over_time(self.trimmed_sim_pos,
                                                 self.trimmed_og_pos)
 
             # updating the error lists
