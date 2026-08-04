@@ -25,7 +25,9 @@ class ContinuousAttractorNetwork:
                                      dt=dt, tau=tau)
         for _ in range(100):
             self.step(calc_phase=False)
-        self.phase_pos = self.initialize_phase(_radius = self._radius) #triangular
+        self.lambda_net = self.measure_lambda_net(self.activity,self.pos,self.n)
+        self.phase_pos = self.init_phase_pos= self.unwrapped_pos = self.initialize_phase(_radius = self._radius) #triangular
+        self.unwrapped_pos = self.unwrapped_pos.astype(float)
 
     def initialize_phase(self,_radius=7):
         i = int(self.n/2)
@@ -104,6 +106,37 @@ class ContinuousAttractorNetwork:
         )
 
         return np.exp(-distances/scaling_constant) # arbitrary beginning bump
+    def measure_lambda_net(self, activity, pos, n):
+        """
+        more ai slop, find better way to calculate distances between peaks
+        """
+        activity_2d = activity.reshape((n, n))
+        
+        # find the global peak
+        peak_idx = np.argmax(activity)
+        peak_pos = pos[peak_idx]
+        
+        # find all local maxima (a neuron brighter than all its immediate lattice neighbors)
+        local_maxima = []
+        for i in range(n):
+            for j in range(n):
+                val = activity_2d[i, j]
+                neighbors = [
+                    activity_2d[(i-1) % n, j], activity_2d[(i+1) % n, j],
+                    activity_2d[i, (j-1) % n], activity_2d[i, (j+1) % n],
+                    activity_2d[(i-1) % n, (j-1) % n], activity_2d[(i+1) % n, (j+1) % n],
+                ]
+                if val > max(neighbors) and val > activity.max() * 0.3:
+                    local_maxima.append(pos[i * n + j])
+        
+        local_maxima = np.array(local_maxima)
+        
+        # distance from the global peak to every other local max, take the smallest
+        dists = np.linalg.norm(local_maxima - peak_pos, axis=1)
+        dists = dists[dists > 1e-6]
+        
+        lambda_net_measured = dists.min()
+        return lambda_net_measured
 
     def step(self, velocity: np.ndarray = np.zeros(2), calc_phase =True):
         """
@@ -116,6 +149,9 @@ class ContinuousAttractorNetwork:
             self.update_phase()
                                                                             
     def update_phase(self):
+        """
+        claude generated. shame, i know, im sorry. 
+        """
         r = self._radius
         i0, j0 = self.phase_pos          # last known center, in (i, j) lattice-index units
 
@@ -162,7 +198,8 @@ class ContinuousAttractorNetwork:
         self.phase_pos = np.array([new_i, new_j])
 
     def get_phase(self):
-        return 
+        self.phase_change = (self.phase_pos-self.init_phase_pos) % self.lambda_net * 2 * np.pi
+        return self.phase_change
     
     def plot_activity(self):
         plt.scatter(

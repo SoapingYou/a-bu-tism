@@ -134,6 +134,7 @@ class GridCellModule:
         """
         return self.can.get_phase() #replace 0 with orientation of module
 
+
 gridcell_test = GridCellModule(spacing=1.0, orientation=0, n=40, K = 1)
 gridcell_test.can = gridcell_test.get_can(gamma_scalar=1.05, beta_scalar=3.,init_bump_scaling_const=10, lambda_net=13, K=1,center=0)
 fig, axes = plt.subplots(1)
@@ -152,4 +153,4 @@ fig, axes = plt.subplots(1)
 
 # plt.show()
 
-gridcell_test.can.plot_activity()
+# gridcell_test.can.plot_activity()
