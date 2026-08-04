@@ -44,13 +44,10 @@ class Connectivity:
         """
         distances_sqrd = np.zeros((self.N, self.N))
         _shift_displacement = self.l * self.preferred_vectors
-        delta = np.zeros((self.N,self.N,2))
 
-        for i in range(self.N):
-            for j in range(self.N):
-                delta[i,j] = pos[i] - pos[j]
+        delta = pos[:, None, :] - pos[None, :, :]
+        delta -= self.l * self.preferred_vectors[None, :, :]
 
-        delta -= _shift_displacement
         # wrap delta in triangular lattice. delta is currently in cartesian x,y difs
         i = delta[:,:,0] - delta[:,:,1]/np.sqrt(3)  # i is NxN
         j = 2*delta[:,:,1]/np.sqrt(3) # j is NxN
@@ -82,14 +79,10 @@ class Connectivity:
           (etheta is unit vector of preferred direction of neuron i)
           A(xi) = 1 if periodic, anddddddd idrc about the nonperiodic rn LMAO too complicated.
         """
-        biases = np.zeros((self.N))
-        for i in range(self.N):
-            A = 1
-            if(not self.periodicity):
-                A = self.aperiodic_A() #rn it just returns 1, but later will be a function of xi
-            biases[i] = A * (1 - self.velocity_gain * np.dot(self.preferred_vectors[i], velocity))
-        return biases
-    
+        return 1 + self.velocity_gain * (
+                self.preferred_vectors @ velocity
+        )
+
 
         
     def derive_new_activity(self, activity:np.ndarray, velocity:np.ndarray = np.zeros(2)):
