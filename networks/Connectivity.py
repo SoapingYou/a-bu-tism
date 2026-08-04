@@ -1,8 +1,8 @@
 import numpy as np
 
 class Connectivity:
-    def __init__(self, n, preferred_vectors: np.ndarray, pos,
-                 a, gamma, beta, l, velocity_gain, nonlinearity, 
+    def __init__(self, n, preferred_vectors: np.ndarray, pos, spacing,
+                 a, gamma_scalar, beta_scalar, lambda_net,l, velocity_gain, nonlinearity, 
                  periodicity = True,   
                  dt = 0.001, tau=0.01):
         self.n = n
@@ -10,10 +10,15 @@ class Connectivity:
         self.preferred_vectors = preferred_vectors # (N,2)
         self.periodicity = periodicity
         self.pos = pos
+        self.spacing = spacing
+        self.lambda_net = lambda_net
+
+        self.gamma_scalar = gamma_scalar
+        self.beta_scalar = beta_scalar
 
         self.a = a
-        self.gamma = gamma
-        self.beta = beta
+        self.beta = self.beta_scalar / (self.lambda_net)**2
+        self.gamma = self.gamma_scalar*self.beta
         self.l = l
         self.velocity_gain = velocity_gain
 
@@ -108,6 +113,6 @@ class Connectivity:
         
     def aperiodic_A(self):
         """
-        has some fuckahh equation for aperiodic A(xi) that I will implement later.
+        has some ... equation for aperiodic A(xi) that I will implement later.
         """
         return 1

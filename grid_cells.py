@@ -76,23 +76,23 @@ class GridCellModule:
         """matthew bu write ur orientation shi"""
         self.orientation = orientation
         self.n=n
-        velocity_gain = K / spacing
-        self.can = ContinuousAttractorNetwork(n, tau=0.01, dt = 0.001, 
-                                               a=1, gamma = 0.01863905325, beta= 0.01775147929, l=1, velocity_gain=velocity_gain, 
+        velocity_gain = K / self.spacing
+        self.can = ContinuousAttractorNetwork(n, tau=0.01, dt = 0.001, spacing=self.spacing,
+                                               a=1, gamma_scalar = 1.05, beta_scalar=3.0, lambda_net=13, l=1, velocity_gain=velocity_gain, 
                                                periodicity=True,
                                                nonlinearity = "rect", init_bump_scaling_const=10,center=0)
         # self.can = self.get_can() 
 
-    def get_can(self, tau=0.01, dt = 0.001,  
-                     a=1, gamma = 0.01863905325, beta= 0.01775147929, l=1, K=1,center=0,
+    def get_can(self, tau=0.01, dt = 0.001,
+                     a=1, gamma_scalar = 1.05, beta_scalar = 3.0, lambda_net=13, l=1, K=1,center=0,
                      nonlinearity = "rect", periodicity = True, init_bump_scaling_const=10,):
         """
         call manually after if you want to change parameters of can.
         """
         velocity_gain = K/self.spacing
-        return ContinuousAttractorNetwork(n=self.n, tau=tau, dt=dt,
-                                           a=a, gamma=gamma, beta=beta, l=l, velocity_gain=velocity_gain, 
-                                           nonlinearity=nonlinearity, periodicity=periodicity,
+        return ContinuousAttractorNetwork(n=self.n, spacing=self.spacing, tau=tau, dt=dt,
+                                           a=a, gamma_scalar=gamma_scalar, beta_scalar=beta_scalar, lambda_net=lambda_net,l=l, velocity_gain=velocity_gain, 
+                                           nonlinearity=nonlinearity, periodicity=periodicity, center=center,
                                            init_bump_scaling_const=init_bump_scaling_const)
     def firing_rates(self):
         #self.can.get_firing_rates()
@@ -104,9 +104,21 @@ class GridCellModule:
         """
         return self.can.get_phase() #replace 0 with orientation of module
 
-gridcell_test = GridCellModule(spacing=50.0, orientation=0, n=40, K = 1)
-gridcell_test.can = gridcell_test.get_can(gamma=0.1, beta=0.07,init_bump_scaling_const=10, K=1,center=0)
-#plt.imshow(gridcell_test.can.conn_obj.weights_ij)
-for i in range(1000):
-    gridcell_test.can.step(velocity=np.array([1,5]))
+gridcell_test = GridCellModule(spacing=1.0, orientation=0, n=40, K = 1)
+gridcell_test.can = gridcell_test.get_can(gamma_scalar=1.05, beta_scalar=3.,init_bump_scaling_const=10, lambda_net=13, K=1,center=0)
+fig, axes = plt.subplots(1)
+
+# test = [100, 200, 300]
+# for i in range(3):
+#     gridcell_test = GridCellModule(spacing=test[i], orientation=0, n=40, K = 1)
+#     gridcell_test.can = gridcell_test.get_can(gamma_scalar=1.05, beta_scalar=3.0,init_bump_scaling_const=10, K=1,center=0, lambda_net=13)
+#     for j in range(60):
+#         gridcell_test.can.step(velocity=np.array([0,0]))
+#     axes[i].scatter(
+#                 gridcell_test.can.pos[:,0],
+#                 gridcell_test.can.pos[:,1],
+#                 c=gridcell_test.can.activity
+#             )
+
+# plt.show()
 gridcell_test.can.plot_activity()

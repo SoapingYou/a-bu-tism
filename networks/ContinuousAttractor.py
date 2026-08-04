@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 from Connectivity import Connectivity
 
 class ContinuousAttractorNetwork:
-    def __init__(self, n, 
+    def __init__(self, n, spacing,
                  tau=0.01, dt = 0.001, 
-                 a=1, gamma = 0.01863905325, beta= 0.01775147929, l=1, velocity_gain=0.10315, 
+                 a=1, gamma_scalar = 1.05, beta_scalar= 3.0, lambda_net=13, l=1, velocity_gain=0.10315, 
                  periodicity=True,
                  nonlinearity = "rect", center=0, init_bump_scaling_const=10):
         """
@@ -16,12 +16,35 @@ class ContinuousAttractorNetwork:
         get_phase()"""
         self.n = n
         self.N = n*n
+        self._init_radius = 10
         self.preferred_vectors, self.pos = self.make_grid() # 1d numpy arrays (N)
         self.activity = self.initialize_bump(center=center, scaling_constant=init_bump_scaling_const) #rectangular neural grid... but we are actually encoding TRIANGULAR LATTICE
-        self.conn_obj = Connectivity(n, self.preferred_vectors, self.pos,
-                                     a, gamma, beta, l, velocity_gain,
-                                     nonlinearity, periodicity=periodicity, 
+        self.conn_obj = Connectivity(n, self.preferred_vectors, self.pos, spacing=spacing,
+                                     a=a, gamma_scalar=gamma_scalar, beta_scalar=beta_scalar, lambda_net=lambda_net, l=l, velocity_gain=velocity_gain,
+                                     nonlinearity=nonlinearity, periodicity=periodicity, 
                                      dt=dt, tau=tau)
+        for _ in range(100):
+            self.step()
+        self.phase_pos = self.initialize_phase(_init_radius = self._init_radius) #triangular
+
+    def initialize_phase(self,_init_radius=7):
+        i = int(self.n/2)
+        j = int(self.n/2)
+        activity2d = self.activity.reshape(self.n, self.n)
+
+        cropped = activity2d[
+            i-_init_radius:i+_init_radius,
+            j-_init_radius:j+_init_radius
+        ]
+
+        # coordinates inside the crop
+        di, dj = np.unravel_index(np.argmax(cropped), cropped.shape)
+
+        # coordinates in the full grid
+        I = i - _init_radius + di
+        J = j - _init_radius + dj
+
+        return np.array([I,J])
         
     def make_grid(self):
         """
@@ -89,16 +112,27 @@ class ContinuousAttractorNetwork:
         phi is nonlinearity, currently its rect. 
         """
         self.activity = self.conn_obj.derive_new_activity(self.activity,velocity) # 1D array (N)
+        #update phase()
+
+    def update_phase(self):
+        i1 = self.phase_pos[0] - self._init_radius
+        i2 = self.phase_pos[0] + self._init_radius
+        j1 = self.phase_pos[1] - self._init_radius
+        j2 = self.phase_pos[1] + self._init_radius
+
+        # ranges
+        # if(i1<0):
+            
+        # self.activity=[(i1-self._init_radius,i+self._init_radius),
+        # (j-self._init_radius,j+self._init_radius)]
+        
+        # WRAP AROUND (TRIANGULARLY) indices
+        #get new phase pos from argmax of this weird wraparound sect
+        pass
 
     def get_phase(self):
-        """
-        currently returns the RECTANGULAR phase of neuron with highest activity
-        
-        later will replace with weighted avg of positions of neurons by activity 
-        rtype np.ndarray (2)
-        """
-        #replace with weighted average of positions of neurons weighted by their activity
-        return self.pos[(np.argmax(self.activity))] / self.n * 2*np.pi
+        return 
+    
     def plot_activity(self):
         plt.scatter(
             self.pos[:,0],
